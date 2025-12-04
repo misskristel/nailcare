@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Nail Appointment - Nails Booking</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary-bg: #ffffff;
+      --secondary-bg: #f5f5f5;
+      --accent-primary: #000000;
+      --accent-secondary: #333333;
+      --text-primary: #000000;
+      --text-secondary: #666666;
+      --border-color: #e0e0e0;
+      --card-bg: #ffffff;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.15),
+        0 10px 10px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--primary-bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background:
+        repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0, 0, 0, 0.02) 10px, rgba(0, 0, 0, 0.02) 20px);
+      z-index: -1;
+    }
+
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 1.25rem 2rem;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border-color);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+
+    .nav-menu {
+      display: flex;
+      list-style: none;
+      gap: 2.5rem;
+    }
+
+    .nav-menu li a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      position: relative;
+      font-size: 0.95rem;
+    }
+
+    .nav-menu li a:hover {
+      color: var(--accent-primary);
+    }
+
+    .nav-menu li a.active {
+      color: var(--accent-primary);
+      font-weight: 600;
+    }
+
+    .nav-menu li a.active::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      bottom: -6px;
+      left: 0;
+      background: var(--accent-primary);
+      border-radius: 2px;
+    }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+      gap: 4px;
+    }
+
+    .hamburger span {
+      width: 24px;
+      height: 2px;
+      background: var(--text-primary);
+      transition: all 0.3s ease;
+    }
+
+    .hamburger.active span:nth-child(1) {
+      transform: rotate(45deg) translate(6px, 6px);
+    }
+
+    .hamburger.active span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .hamburger.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(6px, -6px);
+    }
+
+    main {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 120px 1.5rem 80px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow);
+      padding: 2rem 2.5rem;
+      max-width: 500px;
+      width: 100%;
+    }
+
+    .card-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+    }
+
+    .card-subtitle {
+      color: var(--text-secondary);
+      margin-bottom: 1.75rem;
+      font-size: 0.95rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.4rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    select,
+    input[type="datetime-local"] {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      background: var(--secondary-bg);
+      font-size: 0.95rem;
+      color: var(--text-primary);
+      outline: none;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow);
+    }
+
+    select:focus,
+    input[type="datetime-local"]:focus {
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.15), var(--shadow);
+    }
+
+    .button-row {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+    }
+
+    .btn {
+      padding: 0.9rem 1.5rem;
+      border-radius: 999px;
+      border: none;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow);
+    }
+
+    .btn-secondary {
+      background: var(--secondary-bg);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background: #e5e7eb;
+    }
+
+    .btn-primary {
+      background: var(--accent-primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    footer {
+      padding: 2rem;
+      text-align: center;
+      color: var(--text-secondary);
+      background: var(--secondary-bg);
+      border-top: 1px solid var(--border-color);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+      nav {
+        padding: 1rem;
+      }
+
+      .hamburger {
+        display: flex;
+      }
+
+      .nav-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(255, 255, 255, 0.98);
+        flex-direction: column;
+        padding: 1.5rem;
+        gap: 1.25rem;
+        transform: translateY(-100%);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        border-bottom: 1px solid var(--border-color);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      }
+
+      .nav-menu.active {
+        transform: translateY(0);
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .nav-menu li a {
+        display: block;
+        text-align: center;
+        padding: 0.5rem;
+      }
+
+      main {
+        padding: 100px 1rem 80px;
+      }
+
+      .card {
+        padding: 1.75rem 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-container">
+      <a href="dashboard.html" class="logo">Nail Care Booking</a>
+      <ul class="nav-menu" id="nav-menu">
+        <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+        <li><a href="book_appointment.html" class="nav-link active">Book Appointment</a></li>
+        <li><a href="appointments.html" class="nav-link">My Appointments</a></li>
+        <li><a href="profile.html" class="nav-link">Profile</a></li>
+        <li><a href="#" class="nav-link" onclick="logout(); return false;">Logout</a></li>
+      </ul>
+      <div class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <div class="card">
+      <h1 class="card-title">Book Nail Care Appointment</h1>
+      <p class="card-subtitle">Select nail care service, technician, date, and time.</p>
+
+      <form id="appointmentForm">
+        <div class="form-group">
+          <label for="serviceSelect">Nail Care Service</label>
+          <select id="serviceSelect" required>
+            <option value="">Select nail care service</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="technicianSelect">Technician</label>
+          <select id="technicianSelect" required>
+            <option value="">Select technician</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="dateInput">Appointment Date</label>
+          <input type="date" id="dateInput" required min="" />
+        </div>
+
+        <div class="form-group">
+          <label for="timeSlotSelect">Appointment Time</label>
+          <select id="timeSlotSelect" required>
+            <option value="">Select appointment time</option>
+            <option value="08:00:00">8:00 AM – 10:00 AM</option>
+            <option value="10:00:00">10:00 AM – 12:00 PM</option>
+            <option value="13:00:00">1:00 PM – 3:00 PM</option>
+            <option value="15:00:00">3:00 PM – 5:00 PM</option>
+          </select>
+        </div>
+
+        <div class="button-row">
+          <button type="button" class="btn btn-secondary" onclick="window.location.href='dashboard.html'">
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-primary">
+            Book Appointment
+          </button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Nail Care Booking. All rights reserved.</p>
+  </footer>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    $(document).ready(function() {
+      requireAuth();
+      setupNav();
+
+      // Set minimum date to tomorrow (cannot book today or past dates)
+      const $dateInput = $("#dateInput");
+      const today = new Date();
+      const tomorrow = new Date(today);
+      tomorrow.setDate(today.getDate() + 1);
+      
+      // Format date as YYYY-MM-DD for the min attribute
+      const year = tomorrow.getFullYear();
+      const month = String(tomorrow.getMonth() + 1).padStart(2, '0');
+      const day = String(tomorrow.getDate()).padStart(2, '0');
+      const minDate = `${year}-${month}-${day}`;
+      
+      // Set the min attribute to disable today and past dates in the date picker
+      $dateInput.attr('min', minDate);
+      $dateInput.val(""); // Clear any existing value
+      
+      // Add input event listener to prevent manual entry of today or past dates
+      $dateInput.on("input", function() {
+        if ($(this).val()) {
+          const selectedDate = new Date($(this).val() + 'T00:00:00');
+          const todayDate = new Date();
+          todayDate.setHours(0, 0, 0, 0);
+          selectedDate.setHours(0, 0, 0, 0);
+          
+          if (selectedDate <= todayDate) {
+            alert("You cannot book an appointment for today or in the past. Please select a future date.");
+            $(this).val(minDate); // Reset to minimum date (tomorrow)
+          }
+        }
+      });
+      
+      // Add change event listener as additional validation
+      $dateInput.on("change", function() {
+        if ($(this).val()) {
+          const selectedDate = new Date($(this).val() + 'T00:00:00');
+          const todayDate = new Date();
+          todayDate.setHours(0, 0, 0, 0);
+          selectedDate.setHours(0, 0, 0, 0);
+          
+          if (selectedDate <= todayDate) {
+            alert("You cannot book an appointment for today or in the past. Please select a future date.");
+            $(this).val(minDate); // Reset to minimum date (tomorrow)
+          }
+        }
+      });
+
+      // Check if this is a reschedule request
+      const urlParams = new URLSearchParams(window.location.search);
+      const rescheduleId = urlParams.get('reschedule');
+      
+      loadServicesAndTechnicians();
+      
+      if (rescheduleId) {
+        // Load appointment data for rescheduling (after services/technicians load)
+        loadAppointmentForReschedule(rescheduleId);
+      }
+
+      const $form = $("#appointmentForm");
+      $form.on("submit", async function(e) {
+        e.preventDefault();
+
+        const token = localStorage.getItem("authToken");
+        const technicianId = $("#technicianSelect").val();
+        const serviceName = $("#serviceSelect").val();
+        const date = $("#dateInput").val();
+        const timeSlot = $("#timeSlotSelect").val();
+
+        if (!technicianId || !serviceName || !date || !timeSlot) {
+          alert("Please select a nail care service, technician, appointment date, and appointment time.");
+          return;
+        }
+
+        // Prevent booking today's date or past dates
+        const selectedDate = new Date(date);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        selectedDate.setHours(0, 0, 0, 0);
+        
+        if (selectedDate <= today) {
+          alert("You cannot book an appointment for today or in the past. Please select a future date.");
+          return;
+        }
+
+        try {
+          const res = await axios.post(
+            "https://nailcare.ccs4thyear.com/api/appointments",
+            {
+              technician_id: technicianId,
+              service_name: serviceName,
+              date: date,
+              time: timeSlot,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          if (res.status === 201) {
+            alert("Appointment booked!");
+            window.location.href = "appointments.html";
+          }
+        } catch (err) {
+          console.error("Book appointment error:", err);
+          const msg =
+            err.response && err.response.data && err.response.data.message
+              ? err.response.data.message
+              : "Failed to book appointment.";
+          alert(msg);
+        }
+      });
+    });
+
+    function setupNav() {
+      const $hamburger = $('#hamburger');
+      const $navMenu = $('#nav-menu');
+
+      if ($hamburger.length && $navMenu.length) {
+        $hamburger.on('click', function() {
+          $hamburger.toggleClass('active');
+          $navMenu.toggleClass('active');
+        });
+
+        $('.nav-link').on('click', function() {
+          $hamburger.removeClass('active');
+          $navMenu.removeClass('active');
+        });
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('userRole');
+      window.location.href = 'login.html';
+    }
+
+    async function loadServicesAndTechnicians() {
+      const token = localStorage.getItem("authToken");
+
+      if (!token) {
+        alert("Please login to book an appointment.");
+        window.location.href = "login.html";
+        return;
+      }
+
+        try {
+          console.log("Loading services and technicians...");
+        
+        // Load services
+        let servicesRes;
+        try {
+          servicesRes = await axios.get("https://nailcare.ccs4thyear.com/api/nail-services", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          console.log("Services loaded:", servicesRes.data);
+        } catch (err) {
+          console.error("Error loading services:", err);
+          if (err.response?.status === 401) {
+            localStorage.removeItem('authToken');
+            alert("Session expired. Please login again.");
+            window.location.href = 'login.html';
+            return;
+          }
+          servicesRes = { data: [] };
+          console.warn("Continuing without services due to error");
+        }
+
+        // Load technicians
+        let techsRes;
+        try {
+          techsRes = await axios.get("https://nailcare.ccs4thyear.com/api/technicians", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          console.log("Technicians loaded:", techsRes.data);
+        } catch (err) {
+          console.error("Error loading technicians:", err);
+          if (err.response?.status === 401) {
+            localStorage.removeItem('authToken');
+            alert("Session expired. Please login again.");
+            window.location.href = 'login.html';
+            return;
+          }
+          techsRes = { data: [] };
+          console.warn("Continuing without technicians due to error");
+        }
+
+        // Load services
+        const $servicesSelect = $("#serviceSelect");
+        if (!$servicesSelect.length) {
+          console.error("Service select element not found");
+          return;
+        }
+
+        $servicesSelect.html('<option value="">Select nail care service</option>');
+        
+        if (servicesRes.data && servicesRes.data.length > 0) {
+          servicesRes.data.forEach((item) => {
+            const serviceName = item.service_name || 'Unknown Service';
+            const $opt = $('<option>').val(serviceName).text(`${serviceName} (₱${parseFloat(item.price).toFixed(2)})`);
+            $servicesSelect.append($opt);
+          });
+        } else {
+          const $opt = $('<option>').val("").text("No services available").prop('disabled', true);
+          $servicesSelect.append($opt);
+        }
+
+        // Load technicians
+        const $techSelect = $("#technicianSelect");
+        if (!$techSelect.length) {
+          console.error("Technician select element not found");
+          return;
+        }
+
+        $techSelect.html('<option value="">Select technician</option>');
+        
+        if (techsRes.data && techsRes.data.length > 0) {
+          techsRes.data.forEach((t) => {
+            const $opt = $('<option>').val(t.id).text(`${t.name} (${t.email})`);
+            $techSelect.append($opt);
+          });
+        } else {
+          const $opt = $('<option>').val("").text("No technicians available").prop('disabled', true);
+          $techSelect.append($opt);
+        }
+      } catch (err) {
+        console.error("Load data error:", err);
+        const errorMsg = err.message || "Failed to load services or technicians. Please try again.";
+        alert(errorMsg);
+        
+        // If unauthorized, redirect to login
+        if (err.response && err.response.status === 401) {
+          localStorage.removeItem('authToken');
+          window.location.href = 'login.html';
+        }
+      }
+    }
+
+    async function loadAppointmentForReschedule(appointmentId) {
+      const token = localStorage.getItem("authToken");
+      
+      if (!token) {
+        alert("Please login to reschedule an appointment.");
+        window.location.href = "login.html";
+        return;
+      }
+
+      try {
+        const res = await axios.get(
+          `https://nailcare.ccs4thyear.com/api/appointments/${appointmentId}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        const appointment = res.data;
+        
+        // Wait for services and technicians to load, then pre-fill the form
+        // Use a polling approach to wait for dropdowns to be populated
+        const checkAndFill = setInterval(() => {
+          const $serviceSelect = $("#serviceSelect");
+          const $technicianSelect = $("#technicianSelect");
+          
+          // Check if dropdowns have options loaded (more than just placeholder)
+          if ($serviceSelect.length && $serviceSelect.find('option').length > 1 && 
+              $technicianSelect.length && $technicianSelect.find('option').length > 1) {
+            clearInterval(checkAndFill);
+            
+            // Pre-fill service
+            if (appointment.service_name) {
+              // Find the option that matches the service name
+              $serviceSelect.find('option').each(function() {
+                if ($(this).text().includes(appointment.service_name)) {
+                  $serviceSelect.val($(this).val());
+                  return false; // break
+                }
+              });
+            }
+
+            // Pre-fill technician - find by email since we're using user IDs
+            if (appointment.technician && appointment.technician.email) {
+              // Find technician user by email
+              $technicianSelect.find('option').each(function() {
+                if ($(this).text().includes(appointment.technician.email)) {
+                  $technicianSelect.val($(this).val());
+                  return false; // break
+                }
+              });
+            }
+
+          // Pre-fill date
+          const $dateInput = $("#dateInput");
+          if ($dateInput.length && appointment.date) {
+            const appointmentDate = new Date(appointment.date);
+            const year = appointmentDate.getFullYear();
+            const month = String(appointmentDate.getMonth() + 1).padStart(2, '0');
+            const day = String(appointmentDate.getDate()).padStart(2, '0');
+            $dateInput.val(`${year}-${month}-${day}`);
+          }
+
+          // Pre-fill time
+          const $timeSelect = $("#timeSlotSelect");
+          if ($timeSelect.length && appointment.time) {
+            // Extract time portion
+            let timeStr = appointment.time;
+            if (typeof timeStr === 'string' && timeStr.includes(' ')) {
+              timeStr = timeStr.split(' ')[1];
+            }
+            timeStr = timeStr.substring(0, 8); // Get HH:MM:SS
+            
+            // Find matching time slot
+            $timeSelect.find('option').each(function() {
+              if ($(this).val() === timeStr) {
+                $timeSelect.val($(this).val());
+                return false; // break
+              }
+            });
+          }
+
+            // Update button text
+            const $submitButton = $('#appointmentForm button[type="submit"]');
+            if ($submitButton.length) {
+              $submitButton.text("Reschedule Appointment");
+            }
+          }
+        }, 200); // Check every 200ms
+        
+        // Timeout after 10 seconds
+        setTimeout(() => clearInterval(checkAndFill), 10000);
+
+      } catch (err) {
+        console.error("Error loading appointment:", err);
+        alert("Failed to load appointment data. Redirecting to appointments page.");
+        window.location.href = "appointments.html";
+      }
+    }
+  </script>
+</body>
+</html>
+
+

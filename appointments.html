@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Appointments - Nails Booking</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary-bg: #ffffff;
+      --secondary-bg: #f5f5f5;
+      --accent-primary: #000000;
+      --accent-secondary: #333333;
+      --text-primary: #000000;
+      --text-secondary: #666666;
+      --border-color: #e0e0e0;
+      --card-bg: #ffffff;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.15),
+        0 10px 10px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--primary-bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background:
+        repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0, 0, 0, 0.02) 10px, rgba(0, 0, 0, 0.02) 20px);
+      z-index: -1;
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 1.25rem 2rem;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border-color);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+
+    .nav-menu {
+      display: flex;
+      list-style: none;
+      gap: 2.5rem;
+    }
+
+    .nav-menu li a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      position: relative;
+      font-size: 0.95rem;
+    }
+
+    .nav-menu li a:hover {
+      color: var(--accent-primary);
+    }
+
+    .nav-menu li a.active {
+      color: var(--accent-primary);
+      font-weight: 600;
+    }
+
+    .nav-menu li a.active::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      bottom: -6px;
+      left: 0;
+      background: var(--accent-primary);
+      border-radius: 2px;
+    }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+      gap: 4px;
+    }
+
+    .hamburger span {
+      width: 24px;
+      height: 2px;
+      background: var(--text-primary);
+      transition: all 0.3s ease;
+    }
+
+    .hamburger.active span:nth-child(1) {
+      transform: rotate(45deg) translate(6px, 6px);
+    }
+
+    .hamburger.active span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .hamburger.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(6px, -6px);
+    }
+
+    /* Main */
+    main {
+      padding: 120px 2rem 80px;
+      min-height: 100vh;
+    }
+
+    .dashboard-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .dashboard-header {
+      margin-bottom: 2rem;
+    }
+
+    .dashboard-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .dashboard-subtitle {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+    }
+
+    .table-container {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .table-container:hover {
+      box-shadow: var(--shadow-hover);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+
+    th,
+    td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    th {
+      background: var(--secondary-bg);
+      color: var(--text-primary);
+      font-weight: 700;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    td {
+      color: var(--text-primary);
+      font-size: 0.95rem;
+    }
+
+    tr:hover {
+      background: rgba(0, 0, 0, 0.03);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .status-pill {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .status-pending {
+      background: rgba(234, 179, 8, 0.1);
+      color: #b45309;
+      border: 1px solid rgba(234, 179, 8, 0.4);
+    }
+
+    .status-approved {
+      background: rgba(34, 197, 94, 0.1);
+      color: #15803d;
+      border: 1px solid rgba(34, 197, 94, 0.4);
+    }
+
+    .status-rescheduled {
+      background: rgba(59, 130, 246, 0.1);
+      color: #1d4ed8;
+      border: 1px solid rgba(59, 130, 246, 0.4);
+    }
+
+    .status-declined {
+      background: rgba(239, 68, 68, 0.1);
+      color: #b91c1c;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+    }
+
+    .status-completed {
+      background: rgba(16, 185, 129, 0.1);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+
+    .action-btn {
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      border: none;
+      font-size: 0.8rem;
+      cursor: pointer;
+      font-weight: 500;
+      margin-right: 0.4rem;
+      box-shadow: var(--shadow);
+      transition: all 0.2s ease;
+    }
+
+    .action-btn.primary {
+      background: var(--accent-primary);
+      color: #fff;
+    }
+
+    .action-btn.danger {
+      background: rgba(239, 68, 68, 0.1);
+      color: #b91c1c;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+    }
+
+    .action-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    select.status-select {
+      padding: 0.35rem 0.5rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      font-size: 0.85rem;
+      background: var(--secondary-bg);
+    }
+
+    footer {
+      padding: 2rem;
+      text-align: center;
+      color: var(--text-secondary);
+      background: var(--secondary-bg);
+      border-top: 1px solid var(--border-color);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+      nav {
+        padding: 1rem;
+      }
+
+      .hamburger {
+        display: flex;
+      }
+
+      .nav-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(255, 255, 255, 0.98);
+        flex-direction: column;
+        padding: 1.5rem;
+        gap: 1.25rem;
+        transform: translateY(-100%);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        border-bottom: 1px solid var(--border-color);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        backdrop-filter: blur(10px);
+      }
+
+      .nav-menu.active {
+        transform: translateY(0);
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .nav-menu li a {
+        display: block;
+        text-align: center;
+        padding: 0.5rem;
+      }
+
+      main {
+        padding: 100px 1rem 80px;
+      }
+
+      .dashboard-title {
+        font-size: 2rem;
+      }
+
+      .table-container {
+        overflow-x: auto;
+      }
+
+      table {
+        min-width: 650px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .dashboard-title {
+        font-size: 1.75rem;
+      }
+
+      .table-container {
+        padding: 1rem;
+      }
+
+      th,
+      td {
+        padding: 0.6rem 0.4rem;
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-container">
+      <a href="dashboard.html" class="logo">Nail Care Booking</a>
+      <ul class="nav-menu" id="nav-menu">
+        <!-- Navigation will be populated by JavaScript based on role -->
+      </ul>
+      <div class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <div class="dashboard-container">
+      <div class="dashboard-header">
+        <h1 class="dashboard-title" id="appointmentsTitle">Appointments</h1>
+        <p class="dashboard-subtitle" id="appointmentsSubtitle">View and manage appointments</p>
+      </div>
+
+      <div class="table-container">
+        <table id="appointmentsTable">
+          <thead id="appointmentsTableHead">
+            <!-- Table headers will be populated by JavaScript based on role -->
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Nail Care Booking. All rights reserved.</p>
+  </footer>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    $(document).ready(function() {
+      requireAuth();
+      setupNav();
+      loadAppointments();
+    });
+
+    function setupNav() {
+      const $hamburger = $('#hamburger');
+      const $navMenu = $('#nav-menu');
+      const role = localStorage.getItem('userRole') || 'client';
+
+      if ($hamburger.length && $navMenu.length) {
+        $hamburger.on('click', function() {
+          $hamburger.toggleClass('active');
+          $navMenu.toggleClass('active');
+        });
+      }
+
+      // Build navigation based on role
+      let navItems = [];
+      if (role === 'admin') {
+        navItems = [
+          { href: 'dashboard.html', text: 'Dashboard' },
+          { href: 'appointments.html', text: 'Appointments', active: true },
+          { href: 'nail-services.html', text: 'Nail Services' },
+          { href: 'manage-users.html', text: 'Manage Users' },
+          { href: 'profile.html', text: 'Profile' },
+          { href: '#', text: 'Logout', id: 'logoutBtn' }
+        ];
+      } else if (role === 'technician') {
+        navItems = [
+          { href: 'dashboard.html', text: 'Dashboard' },
+          { href: 'appointments.html', text: 'Appointments', active: true },
+          { href: 'profile.html', text: 'Profile' },
+          { href: '#', text: 'Logout', id: 'logoutBtn' }
+        ];
+      } else {
+        navItems = [
+          { href: 'dashboard.html', text: 'Dashboard' },
+          { href: 'book_appointment.html', text: 'Book Appointment' },
+          { href: 'appointments.html', text: 'My Appointments', active: true },
+          { href: 'profile.html', text: 'Profile' },
+          { href: '#', text: 'Logout', id: 'logoutBtn' }
+        ];
+      }
+
+      $navMenu.html(navItems.map(item => {
+        const activeClass = item.active ? 'active' : '';
+        const onclick = item.id === 'logoutBtn' ? 'onclick="logout()"' : '';
+        return `<li><a href="${item.href}" class="nav-link ${activeClass}" ${onclick}>${item.text}</a></li>`;
+      }).join(''));
+
+      // Close menu when clicking on nav links
+      $('.nav-link').on('click', function() {
+        $hamburger.removeClass('active');
+        $navMenu.removeClass('active');
+      });
+    }
+
+    function logout() {
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('userRole');
+      window.location.href = 'login.html';
+    }
+
+    function currentRole() {
+      return localStorage.getItem("userRole") || "client";
+    }
+
+    function formatStatus(status) {
+      const cls = `status-pill status-${status}`;
+      return `<span class="${cls}">${status}</span>`;
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return "-";
+      const date = new Date(dateStr);
+      return date.toLocaleDateString();
+    }
+
+    function formatTime(timeStr) {
+      if (!timeStr) return "-";
+      
+      // Map stored time values to their time ranges (matching book_appointment.html)
+      const timeRangeMap = {
+        '08:00:00': '8:00 AM – 10:00 AM',
+        '10:00:00': '10:00 AM – 12:00 PM',
+        '13:00:00': '1:00 PM – 3:00 PM',
+        '15:00:00': '3:00 PM – 5:00 PM'
+      };
+      
+      // Convert timeStr to string if it's not already
+      timeStr = String(timeStr);
+      
+      // If time is in format "HH:MM:SS", check if it matches a known range
+      if (timeStr.includes(':')) {
+        // Extract just the time part (HH:MM:SS)
+        // Handle different formats: "08:00:00" or "2024-01-01 08:00:00" or datetime objects
+        let timeKey = timeStr;
+        
+        // If it contains a space, it might be a datetime string
+        if (timeStr.includes(' ')) {
+          const parts = timeStr.split(' ');
+          timeKey = parts[parts.length - 1]; // Get the last part (time)
+        }
+        
+        // Extract HH:MM:SS format (first 8 characters)
+        if (timeKey.length >= 8) {
+          timeKey = timeKey.substring(0, 8);
+        }
+        
+        // Check if we have a mapped range for this time
+        if (timeRangeMap[timeKey]) {
+          return timeRangeMap[timeKey];
+        }
+        
+        // Fallback: convert to readable format if not in map
+        const timeParts = timeKey.split(':');
+        if (timeParts.length >= 2) {
+          const hour = parseInt(timeParts[0]) || 0;
+          const minutes = timeParts[1] || '00';
+          const ampm = hour >= 12 ? 'PM' : 'AM';
+          const displayHour = hour % 12 || 12;
+          return `${displayHour}:${minutes} ${ampm}`;
+        }
+      }
+      return timeStr;
+    }
+
+    async function loadAppointments() {
+      const token = localStorage.getItem("authToken");
+      const role = currentRole();
+
+      // Update title and subtitle based on role
+      const $titleEl = $('#appointmentsTitle');
+      const $subtitleEl = $('#appointmentsSubtitle');
+      const $theadEl = $('#appointmentsTableHead');
+
+      if (role === 'admin') {
+        $titleEl.text('All Nail Care Appointments');
+        $subtitleEl.text('Manage all appointments');
+        $theadEl.html(`
+          <tr>
+            <th>ID</th>
+            <th>Client Name</th>
+            <th>Nail Service</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        `);
+      } else if (role === 'technician') {
+        $titleEl.text('My Appointments');
+        $subtitleEl.text('View and manage appointments assigned to you');
+        $theadEl.html(`
+          <tr>
+            <th>ID</th>
+            <th>Client Name</th>
+            <th>Nail Care Service</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        `);
+      } else {
+        $titleEl.text('My Appointments');
+        $subtitleEl.text('View and manage your appointments');
+        $theadEl.html(`
+          <tr>
+            <th>Image</th>
+            <th>Service Name</th>
+            <th>Technician</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        `);
+      }
+
+      try {
+        const res = await axios.get("https://nailcare.ccs4thyear.com/api/appointments", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const $tbody = $("#appointmentsTable tbody");
+        $tbody.empty();
+
+        if (res.data.length === 0) {
+          $tbody.html(`<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-secondary);">No appointments found</td></tr>`);
+          return;
+        }
+
+        res.data.forEach((a) => {
+          let rowHtml = "";
+
+          if (role === "admin") {
+            let actionsHtml = "";
+            if (a.status === "pending") {
+              actionsHtml = `
+                <button type="button" class="action-btn primary" onclick="approveAppointment(${a.id})">Approve</button>
+                <button type="button" class="action-btn danger" onclick="declineAppointment(${a.id})">Decline</button>
+              `;
+            }
+
+            rowHtml = `
+              <td>${a.id}</td>
+              <td>${a.customer ? (a.customer.firstname + ' ' + a.customer.lastname) : "-"}</td>
+              <td>${a.service_name || "-"}</td>
+              <td>${formatDate(a.date)}</td>
+              <td>${formatTime(a.time)}</td>
+              <td>${formatStatus(a.status)}</td>
+              <td>${actionsHtml}</td>
+            `;
+          } else if (role === "technician") {
+            // Add "Mark as Completed" button for approved appointments
+            let actionsHtml = "";
+            if (a.status === "approved") {
+              actionsHtml = `<button type="button" class="action-btn primary" onclick="markAsCompleted(${a.id})">Mark as Completed</button>`;
+            }
+            
+            rowHtml = `
+              <td>${a.id}</td>
+              <td>${a.customer ? (a.customer.firstname + ' ' + a.customer.lastname) : "-"}</td>
+              <td>${a.service_name || "-"}</td>
+              <td>${formatDate(a.date)}</td>
+              <td>${formatTime(a.time)}</td>
+              <td>${formatStatus(a.status)}</td>
+              <td>${actionsHtml}</td>
+            `;
+          } else {
+            // Client view
+            const serviceImage = a.service_image || 'uploads/default.png';
+            // Allow rescheduling only for pending and declined appointments, NOT for approved
+            const rescheduleBtn = (a.status === 'pending' || a.status === 'declined')
+              ? `<button type="button" class="action-btn primary" onclick="rescheduleAppointment(${a.id})">Reschedule</button>`
+              : '';
+            // Allow cancelling only when status is pending
+            const cancelBtn = (a.status === 'pending')
+              ? `<button type="button" class="action-btn danger" onclick="cancelAppointment(${a.id})">Cancel</button>`
+              : '';
+            
+            rowHtml = `
+              <td><img src="https://nailcare.ccs4thyear.com/${serviceImage}" alt="${a.service_name}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;"></td>
+              <td>${a.service_name || "-"}</td>
+              <td>${a.technician ? a.technician.name : "-"}</td>
+              <td>${formatDate(a.date)}</td>
+              <td>${formatTime(a.time)}</td>
+              <td>${formatStatus(a.status)}</td>
+              <td>${rescheduleBtn} ${cancelBtn}</td>
+            `;
+          }
+
+          const $tr = $('<tr>').html(rowHtml);
+          $tbody.append($tr);
+        });
+      } catch (err) {
+        console.error("Load appointments error:", err);
+        alert("Failed to load appointments.");
+      }
+    }
+
+    async function approveAppointment(id) {
+      if (!confirm("Approve this appointment?")) return;
+      await updateAppointmentStatus(id, 'approved');
+    }
+
+    async function declineAppointment(id) {
+      if (!confirm("Decline this appointment?")) return;
+      await updateAppointmentStatus(id, 'declined');
+    }
+
+    async function markAsCompleted(id) {
+      if (!confirm("Mark this appointment as completed?")) return;
+      await updateAppointmentStatus(id, 'completed');
+    }
+
+    async function rescheduleAppointment(id) {
+      // Redirect to booking page with appointment ID for rescheduling
+      window.location.href = `book_appointment.html?reschedule=${id}`;
+    }
+
+    async function updateAppointmentStatus(id, status = null) {
+      const token = localStorage.getItem("authToken");
+      const newStatus = status || 'approved';
+
+      try {
+        await axios.put(
+          `https://nailcare.ccs4thyear.com/api/appointments/${id}`,
+          { status: newStatus },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        alert("Appointment " + newStatus + " successfully.");
+        loadAppointments();
+      } catch (err) {
+        console.error("Update status error:", err);
+        alert("Failed to update status.");
+      }
+    }
+
+    async function cancelAppointment(id) {
+      if (!confirm("Cancel this appointment?")) return;
+      await updateAppointmentStatus(id, 'canceled');
+    }
+  </script>
+</body>
+</html>

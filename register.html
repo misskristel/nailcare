@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - Nail Care Booking App</title>
+<style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary-bg: #ffffff;
+      --secondary-bg: #f5f5f5;
+      --accent-primary: #000000;
+      --accent-secondary: #333333;
+      --text-primary: #000000;
+      --text-secondary: #666666;
+      --border-color: #e0e0e0;
+      --card-bg: #ffffff;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--primary-bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* Background with subtle pattern */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0, 0, 0, 0.02) 10px, rgba(0, 0, 0, 0.02) 20px);
+      z-index: -1;
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 1.25rem 2rem;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border-color);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+
+    .nav-menu {
+      display: flex;
+      list-style: none;
+      gap: 2.5rem;
+    }
+
+    .nav-menu li a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      position: relative;
+      font-size: 0.95rem;
+    }
+
+    .nav-menu li a:hover {
+      color: var(--accent-primary);
+    }
+
+    .nav-menu li a.active {
+      color: var(--accent-primary);
+      font-weight: 600;
+    }
+
+    .nav-menu li a.active::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      bottom: -6px;
+      left: 0;
+      background: var(--accent-primary);
+      border-radius: 2px;
+    }
+
+    /* Hamburger Menu */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+      gap: 4px;
+    }
+
+    .hamburger span {
+      width: 24px;
+      height: 2px;
+      background: var(--text-primary);
+      transition: all 0.3s ease;
+    }
+
+    .hamburger.active span:nth-child(1) {
+      transform: rotate(45deg) translate(6px, 6px);
+    }
+
+    .hamburger.active span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .hamburger.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(6px, -6px);
+    }
+
+    /* Main Content */
+    main {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+      position: relative;
+    }
+
+    .form-container {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 3rem 2.5rem;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+    }
+
+    .form-container:hover {
+      box-shadow: var(--shadow-hover);
+    }
+
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .form-subtitle {
+      color: var(--text-secondary);
+      text-align: center;
+      margin-bottom: 2rem;
+      font-size: 1rem;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    label {
+      color: var(--text-primary);
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    input {
+      padding: 1rem;
+      background: var(--secondary-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    input::placeholder {
+      color: var(--text-secondary);
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+    }
+
+    /* File input styling */
+    input[type="file"] {
+      padding: 0.8rem;
+      cursor: pointer;
+    }
+
+    input[type="file"]::file-selector-button {
+      background: var(--secondary-bg);
+      border: 1px solid var(--border-color);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      color: var(--text-primary);
+      margin-right: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    input[type="file"]::file-selector-button:hover {
+      background: var(--accent-primary);
+      color: white;
+      border-color: var(--accent-primary);
+    }
+
+    button {
+      padding: 1rem;
+      background: var(--accent-primary);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 0.5rem;
+      box-shadow: var(--shadow);
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .login-link {
+      margin-top: 2rem;
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+
+    .login-link a {
+      color: var(--text-primary);
+      text-decoration: underline;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+
+    /* Footer */
+    footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 2rem;
+      text-align: center;
+      color: var(--text-secondary);
+      background: var(--secondary-bg);
+      border-top: 1px solid var(--border-color);
+      font-size: 0.9rem;
+    }
+
+    /* Form validation styles */
+    .error-message {
+      color: #ef4444;
+      font-size: 0.85rem;
+      margin-top: 0.3rem;
+      text-align: left;
+      display: none;
+    }
+
+    input.error {
+      border-color: #ef4444;
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+    }
+
+    .password-requirements {
+      margin-top: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .requirement {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .requirement.valid {
+      color: #10b981;
+    }
+
+    .requirement.invalid {
+      color: var(--text-secondary);
+    }
+
+    .requirement::before {
+      content: '●';
+      font-size: 0.6rem;
+    }
+
+    .requirement.valid::before {
+      content: '✓';
+      color: #10b981;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      nav {
+        padding: 1rem;
+      }
+
+      .hamburger {
+        display: flex;
+      }
+
+      .nav-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(255, 255, 255, 0.98);
+        flex-direction: column;
+        padding: 1.5rem;
+        gap: 1.25rem;
+        transform: translateY(-100%);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        border-bottom: 1px solid var(--border-color);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        backdrop-filter: blur(10px);
+      }
+
+      .nav-menu.active {
+        transform: translateY(0);
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .nav-menu li a {
+        display: block;
+        text-align: center;
+        padding: 0.5rem;
+      }
+
+      main {
+        padding: 1rem;
+        margin-top: 80px;
+      }
+
+      .form-container {
+        padding: 2.5rem 2rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .form-container {
+        padding: 2rem 1.5rem;
+      }
+
+      footer {
+        padding: 1.5rem 1rem;
+        font-size: 0.85rem;
+      }
+    }
+
+    /* Animation for elements */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .fade-in {
+      animation: fadeInUp 0.6s ease forwards;
+    }
+
+    .delay-1 {
+      animation-delay: 0.2s;
+    }
+
+    .delay-2 {
+      animation-delay: 0.4s;
+    }
+</style>
+</head>
+<body>
+  <div class="particles" id="particles"></div>
+
+  <nav>
+    <div class="nav-container">
+      <a href="index.html" class="logo">Nail Care Booking</a>
+      <ul class="nav-menu" id="nav-menu">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="login.html" class="nav-link">Login</a></li>
+        <li><a href="register.html" class="nav-link">Register</a></li>
+      </ul>
+      <div class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <div class="form-container">
+      <h2>Create Account</h2>
+      <p class="form-subtitle" style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+        You will need to verify your email after registration
+      </p>
+      <form id="registerForm" enctype="multipart/form-data">
+        <div>
+          <input type="text" name="firstname" placeholder="First Name" required>
+          <div class="error-message" id="firstname-error"></div>
+        </div>
+        <div>
+          <input type="text" name="lastname" placeholder="Last Name" required>
+          <div class="error-message" id="lastname-error"></div>
+        </div>
+        <div>
+          <input type="email" name="email" placeholder="Email" required>
+          <div class="error-message" id="email-error"></div>
+        </div>
+        <div>
+          <input type="text" name="username" placeholder="Username" required>
+          <div class="error-message" id="username-error"></div>
+        </div>
+        <div>
+          <input type="password" name="password" placeholder="Password" required>
+          <div class="error-message" id="password-error"></div>
+        </div>
+        <button type="submit">Register</button>
+      </form>
+      <p class="login-link">Already have an account? <a href="login.html">Sign in</a></p>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Nail Care Booking App. All rights reserved.</p>
+  </footer>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/main.js"></script>
+  
+  <script>
+    // Inline script for elements that need to be present before the external JS loads
+    $(document).ready(function() {
+      // Hamburger menu functionality
+      const $hamburger = $('#hamburger');
+      const $navMenu = $('#nav-menu');
+
+      if ($hamburger.length && $navMenu.length) {
+        $hamburger.on('click', function() {
+          $hamburger.toggleClass('active');
+          $navMenu.toggleClass('active');
+        });
+
+        // Close menu when clicking on nav links
+        $('.nav-link').on('click', function() {
+          $hamburger.removeClass('active');
+          $navMenu.removeClass('active');
+        });
+      }
+
+      // Create floating particles
+      function createParticles() {
+        const $particlesContainer = $('#particles');
+        if (!$particlesContainer.length) return;
+        
+        const particleCount = 20;
+
+        for (let i = 0; i < particleCount; i++) {
+          const $particle = $('<div>').addClass('particle');
+          $particle.css({
+            'left': Math.random() * 100 + '%',
+            'width': (Math.random() * 4 + 2) + 'px',
+            'height': (Math.random() * 4 + 2) + 'px',
+            'animation-delay': Math.random() * 15 + 's',
+            'animation-duration': (Math.random() * 10 + 10) + 's'
+          });
+          $particlesContainer.append($particle);
+        }
+      }
+
+      // Initialize particles
+      createParticles();
+      
+      redirectIfLoggedIn(); // Redirect to dashboard if already logged in
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Nail Service - Nail Care Booking</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary-bg: #ffffff;
+      --secondary-bg: #f5f5f5;
+      --accent-primary: #000000;
+      --accent-secondary: #333333;
+      --text-primary: #000000;
+      --text-secondary: #666666;
+      --border-color: #e0e0e0;
+      --card-bg: #ffffff;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--primary-bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0, 0, 0, 0.02) 10px, rgba(0, 0, 0, 0.02) 20px);
+      z-index: -1;
+    }
+
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 1.25rem 2rem;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border-color);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+
+    main {
+      padding: 120px 2rem 80px;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .form-container {
+      width: 100%;
+      max-width: 600px;
+    }
+
+    .form-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 3rem;
+      box-shadow: var(--shadow);
+    }
+
+    .form-title {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+    }
+
+    .form-subtitle {
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 1rem;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: var(--secondary-bg);
+      color: var(--text-primary);
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group input[type="file"] {
+      padding: 0.8rem;
+      cursor: pointer;
+    }
+
+    .file-hint {
+      display: block;
+      margin-top: 0.5rem;
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .btn {
+      flex: 1;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 1.2rem 2rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow);
+    }
+
+    .cancel-btn {
+      background: var(--secondary-bg);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+    }
+
+    .cancel-btn:hover {
+      background: var(--text-secondary);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .submit-btn {
+      background: var(--accent-primary);
+      color: white;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    footer {
+      padding: 2rem;
+      text-align: center;
+      color: var(--text-secondary);
+      background: var(--secondary-bg);
+      border-top: 1px solid var(--border-color);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+      main {
+        padding: 100px 1rem 80px;
+      }
+
+      .form-card {
+        padding: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-container">
+      <a href="nail-services.html" class="logo">Nail Care Booking</a>
+      <a href="nail-services.html" style="color: var(--text-secondary); text-decoration: none;">← Back to Services</a>
+    </div>
+  </nav>
+
+  <main>
+    <div class="form-container">
+      <div class="form-card">
+        <h1 class="form-title">Add New Nail Service</h1>
+        <p class="form-subtitle">Add a new nail care cleaning service</p>
+        
+        <form id="addServiceForm" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="service_name">Service Name *</label>
+            <input type="text" id="service_name" name="service_name" required placeholder="Enter service name">
+          </div>
+          
+          <div class="form-group">
+            <label for="price">Price *</label>
+            <input type="number" step="0.01" id="price" name="price" required placeholder="Enter price (e.g., 500.00)">
+          </div>
+          
+          <div class="form-group">
+            <label for="image">Service Image</label>
+            <input type="file" id="image" name="image" accept="image/*">
+            <small class="file-hint">Supported formats: JPG, PNG, GIF, WebP. Max size: 5MB</small>
+          </div>
+          
+          <div class="form-actions">
+            <button type="button" class="btn cancel-btn" onclick="window.location.href='nail-services.html'">Cancel</button>
+            <button type="submit" class="btn submit-btn">Add Service</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Nail Care Booking. All rights reserved.</p>
+  </footer>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    $(document).ready(function() {
+      requireAuth();
+      
+      const role = localStorage.getItem('userRole');
+      if (role !== 'admin') {
+        alert('Unauthorized access');
+        window.location.href = 'dashboard.html';
+        return;
+      }
+
+      const $addServiceForm = $("#addServiceForm");
+      const $imageInput = $("#image");
+
+      if ($addServiceForm.length) {
+        $addServiceForm.on("submit", async function(e) {
+          e.preventDefault();
+          const $submitButton = $addServiceForm.find('.submit-btn');
+          const originalText = $submitButton.text();
+
+          $submitButton.prop('disabled', true);
+          $submitButton.text("Adding Service...");
+
+          const formData = new FormData();
+          formData.append('service_name', $('#service_name').val());
+          formData.append('price', $('#price').val());
+
+          if ($imageInput[0].files.length > 0) {
+            formData.append('image', $imageInput[0].files[0]);
+          }
+
+          const token = localStorage.getItem('authToken');
+
+          try {
+            const res = await axios.post("https://nailcare.ccs4thyear.com/api/nail-services", formData, {
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'multipart/form-data'
+              }
+            });
+
+            alert("Service added successfully!");
+            window.location.href = "nail-services.html";
+          } catch (err) {
+            console.error("Add service error:", err);
+            const errorMsg = err.response?.data?.message || err.response?.data?.error || 'Failed to add service.';
+            alert(errorMsg);
+          } finally {
+            $submitButton.prop('disabled', false);
+            $submitButton.text(originalText);
+          }
+        });
+      }
+
+      if ($imageInput.length) {
+        $imageInput.on('change', function(e) {
+          const file = e.target.files[0];
+          if (file) {
+            if (file.size > 5 * 1024 * 1024) {
+              alert('File size too large. Max 5MB.');
+              $(this).val('');
+              return;
+            }
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>
+
