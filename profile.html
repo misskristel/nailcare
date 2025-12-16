@@ -399,14 +399,13 @@
       
       <div id="message" class="message"></div>
       
-      <div class="profile-header">
-        <div class="avatar-container">
-    <img id="avatarImage" class="avatar" src="https://nailcare.ccs4thyear.com/uploads/profile.png" alt="Profile Avatar">
-    <label class="avatar-upload" title="Change profile photo">
-        <i>📷</i>
-        <input type="file" id="avatarInput" accept="image/*">
-    </label>
-</div>
+      <div class="avatar-container">
+        <img id="avatarImage" class="avatar" src="https://nailcare.ccs4thyear.com/uploads/profile.png" alt="Profile Avatar" onerror="this.onerror=null; this.src='https://nailcare.ccs4thyear.com/uploads/profile.png';">
+        <label class="avatar-upload" title="Change profile photo">
+          <i>📷</i>
+          <input type="file" id="avatarInput" accept="image/*">
+        </label>
+      </div>
         <div class="user-info">
           <h3 id="userName" class="user-name">Loading...</h3>
           <p id="userUsername" class="user-username">@username</p>
@@ -547,17 +546,27 @@ let avatarUrl = 'https://nailcare.ccs4thyear.com/uploads/profile.png';
 // Prefer server-provided avatar URL if available
 if (data.avatar_url) {
     avatarUrl = data.avatar_url;
-    } else if (data.avatar_path) {
+} else if (data.avatar_path) {
     // Fallback if avatar_url missing
     if (data.avatar_path.startsWith('http')) {
         avatarUrl = data.avatar_path;
     } else {
-        avatarUrl = `https://nailcare.ccs4thyear.com/${data.avatar_path.replace(/^\/+/, '')}`;
+        // Ensure path starts with uploads/avatars/ (remove leading slashes and ensure correct format)
+        let cleanPath = data.avatar_path.replace(/^\/+/, '');
+        // If path doesn't start with 'uploads/', add it
+        if (!cleanPath.startsWith('uploads/')) {
+            cleanPath = 'uploads/' + cleanPath.replace(/^uploads\/+/, '');
+        }
+        avatarUrl = `https://nailcare.ccs4thyear.com/${cleanPath}`;
     }
 }
 
-// Update image source
-$('#avatarImage').attr('src', avatarUrl);
+// Update image source with error handler
+$('#avatarImage').attr('src', avatarUrl).on('error', function() {
+    console.error('Failed to load avatar image:', avatarUrl);
+    // Fallback to default profile image
+    $(this).attr('src', 'https://nailcare.ccs4thyear.com/uploads/profile.png');
+});
 console.log('Avatar URL:', avatarUrl);
 }
     // Handle profile form submission - TEXT ONLY
@@ -745,12 +754,27 @@ $('#passwordForm').on('submit', async function(e) {
             if (response.status === 200) {
                 showMessage('Profile picture updated successfully!', 'success');
                 // Update avatar image with the server path
-                const avatarUrl = `https://nailcare.ccs4thyear.com/${response.data.avatar_path}`;
-                $('#avatarImage').attr('src', avatarUrl);
+                let avatarPath = response.data.avatar_path || response.data.path || '';
+                // Ensure path is in correct format (uploads/avatars/filename.jpg)
+                if (avatarPath && !avatarPath.startsWith('http')) {
+                    avatarPath = avatarPath.replace(/^\/+/, ''); // Remove leading slashes
+                    if (!avatarPath.startsWith('uploads/')) {
+                        avatarPath = 'uploads/' + avatarPath.replace(/^uploads\/+/, '');
+                    }
+                }
+                const avatarUrl = avatarPath.startsWith('http') 
+                    ? avatarPath 
+                    : `https://nailcare.ccs4thyear.com/${avatarPath}`;
+                
+                $('#avatarImage').attr('src', avatarUrl).on('error', function() {
+                    console.error('Failed to load uploaded avatar:', avatarUrl);
+                    $(this).attr('src', 'https://nailcare.ccs4thyear.com/uploads/profile.png');
+                });
                 console.log('Avatar updated to:', avatarUrl);
                 // Update user data in localStorage
                 if (userData) {
-                    userData.avatar_path = response.data.avatar_path;
+                    userData.avatar_path = avatarPath;
+                    userData.avatar_url = avatarUrl;
                     localStorage.setItem('userData', JSON.stringify(userData));
                 }
             } else {
