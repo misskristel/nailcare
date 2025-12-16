@@ -478,6 +478,7 @@
   <script>
     // Get user data from localStorage or API
 let authToken;
+let userData = null; // Declare userData at the top level
 
 $(document).ready(async function() {
   authToken = localStorage.getItem('authToken');
