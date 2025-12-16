@@ -488,12 +488,12 @@ $(document).ready(async function() {
             return;
         }
 
-        // Try to get user data from localStorage first
+        // Try to get user data from localStorage first (for quick display)
         const storedUserData = localStorage.getItem('userData');
         if (storedUserData && storedUserData !== 'null' && storedUserData !== 'undefined') {
             try {
                 userData = JSON.parse(storedUserData);
-                populateProfileForm(userData);
+                populateProfileForm(userData, false); // false = don't log (from cache)
             } catch (error) {
                 console.error('Error parsing stored user data:', error);
                 localStorage.removeItem('userData'); // Remove corrupted data
@@ -511,7 +511,7 @@ $(document).ready(async function() {
             if (response.status === 200) {
                 userData = response.data;
                 localStorage.setItem('userData', JSON.stringify(userData));
-                populateProfileForm(userData);
+                populateProfileForm(userData, true); // true = log (fresh data)
             } else {
                 throw new Error('Failed to fetch profile data');
             }
@@ -530,7 +530,8 @@ $(document).ready(async function() {
     });
 
 // Populate form with user data
-function populateProfileForm(data) {
+// shouldLog: true to log avatar URL (for fresh API data), false to skip (for cached data)
+function populateProfileForm(data, shouldLog = true) {
     const fullName = `${data.firstname || ''} ${data.lastname || ''}`.trim() || data.name || 'User';
     $('#userName').text(fullName);
     $('#userUsername').text(`@${data.username}`);
@@ -567,7 +568,11 @@ $('#avatarImage').attr('src', avatarUrl).on('error', function() {
     // Fallback to default profile image
     $(this).attr('src', 'https://nailcare.ccs4thyear.com/uploads/profile.png');
 });
-console.log('Avatar URL:', avatarUrl);
+
+// Only log if shouldLog is true (fresh data from API)
+if (shouldLog) {
+    console.log('Avatar URL:', avatarUrl);
+}
 }
     // Handle profile form submission - TEXT ONLY
     $('#profileForm').on('submit', async function(e) {
