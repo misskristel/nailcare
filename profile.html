@@ -488,19 +488,20 @@ $(document).ready(async function() {
             return;
         }
 
-        // Try to get user data from localStorage first (for quick display)
+        // Try to get user data from localStorage first (for quick display while loading)
         const storedUserData = localStorage.getItem('userData');
+        let cachedData = null;
         if (storedUserData && storedUserData !== 'null' && storedUserData !== 'undefined') {
             try {
-                userData = JSON.parse(storedUserData);
-                populateProfileForm(userData, false); // false = don't log (from cache)
+                cachedData = JSON.parse(storedUserData);
+                // Only show cached data if API call fails
             } catch (error) {
                 console.error('Error parsing stored user data:', error);
-                localStorage.removeItem('userData'); // Remove corrupted data
+                localStorage.removeItem('userData');
             }
         }
 
-        // Fetch fresh data from API
+        // Fetch fresh data from API (primary source)
         try {
             const response = await axios.get('https://nailcare.ccs4thyear.com/api/profile', {
                 headers: {
@@ -511,7 +512,8 @@ $(document).ready(async function() {
             if (response.status === 200) {
                 userData = response.data;
                 localStorage.setItem('userData', JSON.stringify(userData));
-                populateProfileForm(userData, true); // true = log (fresh data)
+                // Only populate once from API response
+                populateProfileForm(userData);
             } else {
                 throw new Error('Failed to fetch profile data');
             }
@@ -523,15 +525,18 @@ $(document).ready(async function() {
                 window.location.href = 'login.html';
                 return;
             }
-            if (!userData) {
+            // Fallback to cached data if API fails
+            if (cachedData) {
+                userData = cachedData;
+                populateProfileForm(userData);
+            } else {
                 showMessage('Error loading profile data', 'error');
             }
         }
     });
 
-// Populate form with user data
-// shouldLog: true to log avatar URL (for fresh API data), false to skip (for cached data)
-function populateProfileForm(data, shouldLog = true) {
+// Populate form with user data (called only once)
+function populateProfileForm(data) {
     const fullName = `${data.firstname || ''} ${data.lastname || ''}`.trim() || data.name || 'User';
     $('#userName').text(fullName);
     $('#userUsername').text(`@${data.username}`);
@@ -541,38 +546,36 @@ function populateProfileForm(data, shouldLog = true) {
     $('#username').val(data.username || '');
     $('#email').val(data.email || '');
     
-// Set default avatar URL
-let avatarUrl = 'https://nailcare.ccs4thyear.com/uploads/profile.png';
+    // Set default avatar URL
+    let avatarUrl = 'https://nailcare.ccs4thyear.com/uploads/profile.png';
 
-// Prefer server-provided avatar URL if available
-if (data.avatar_url) {
-    avatarUrl = data.avatar_url;
-} else if (data.avatar_path) {
-    // Fallback if avatar_url missing
-    if (data.avatar_path.startsWith('http')) {
-        avatarUrl = data.avatar_path;
-    } else {
-        // Ensure path starts with uploads/avatars/ (remove leading slashes and ensure correct format)
-        let cleanPath = data.avatar_path.replace(/^\/+/, '');
-        // If path doesn't start with 'uploads/', add it
-        if (!cleanPath.startsWith('uploads/')) {
-            cleanPath = 'uploads/' + cleanPath.replace(/^uploads\/+/, '');
+    // Prefer server-provided avatar URL if available
+    if (data.avatar_url) {
+        avatarUrl = data.avatar_url;
+    } else if (data.avatar_path) {
+        // Fallback if avatar_url missing
+        if (data.avatar_path.startsWith('http')) {
+            avatarUrl = data.avatar_path;
+        } else {
+            // Ensure path starts with uploads/avatars/ (remove leading slashes and ensure correct format)
+            let cleanPath = data.avatar_path.replace(/^\/+/, '');
+            // If path doesn't start with 'uploads/', add it
+            if (!cleanPath.startsWith('uploads/')) {
+                cleanPath = 'uploads/' + cleanPath.replace(/^uploads\/+/, '');
+            }
+            avatarUrl = `https://nailcare.ccs4thyear.com/${cleanPath}`;
         }
-        avatarUrl = `https://nailcare.ccs4thyear.com/${cleanPath}`;
     }
-}
 
-// Update image source with error handler
-$('#avatarImage').attr('src', avatarUrl).on('error', function() {
-    console.error('Failed to load avatar image:', avatarUrl);
-    // Fallback to default profile image
-    $(this).attr('src', 'https://nailcare.ccs4thyear.com/uploads/profile.png');
-});
-
-// Only log if shouldLog is true (fresh data from API)
-if (shouldLog) {
+    // Update image source with error handler
+    $('#avatarImage').attr('src', avatarUrl).on('error', function() {
+        console.error('Failed to load avatar image:', avatarUrl);
+        // Fallback to default profile image
+        $(this).attr('src', 'https://nailcare.ccs4thyear.com/uploads/profile.png');
+    });
+    
+    // Log avatar URL once
     console.log('Avatar URL:', avatarUrl);
-}
 }
     // Handle profile form submission - TEXT ONLY
     $('#profileForm').on('submit', async function(e) {
