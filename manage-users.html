@@ -484,7 +484,7 @@
     <div class="dashboard-container">
       <div class="dashboard-header">
         <h1 class="dashboard-title">Manage Users</h1>
-        <p class="dashboard-subtitle">Add, edit, and delete users</p>
+        <p class="dashboard-subtitle">Add, edit, and delete admins and technicians</p>
       </div>
 
       <div class="search-add-container">
@@ -623,12 +623,17 @@
         const $tbody = $('#usersTable tbody');
         $tbody.empty();
 
-        if (res.data.length === 0) {
-          $tbody.html('<tr><td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-secondary);">No users found.</td></tr>');
+        // Filter to only show admins and technicians
+        const adminAndTechnicianUsers = res.data.filter(user => 
+          user.role === 'admin' || user.role === 'technician'
+        );
+
+        if (adminAndTechnicianUsers.length === 0) {
+          $tbody.html('<tr><td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-secondary);">No admins or technicians found.</td></tr>');
           return;
         }
 
-        res.data.forEach(user => {
+        adminAndTechnicianUsers.forEach(user => {
           const roleClass = `role-${user.role || 'client'}`;
           
           const $tr = $(`
