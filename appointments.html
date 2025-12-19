@@ -1,11 +1,11 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard - Nails Booking</title>
- <style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Appointments - Nails Booking</title>
+
+  <style>
     * {
       margin: 0;
       padding: 0;
@@ -21,8 +21,10 @@
       --text-secondary: #666666;
       --border-color: #e0e0e0;
       --card-bg: #ffffff;
-      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.15),
+        0 10px 10px -5px rgba(0, 0, 0, 0.1);
     }
 
     body {
@@ -35,7 +37,6 @@
       line-height: 1.6;
     }
 
-    /* Background with subtle pattern */
     body::before {
       content: '';
       position: fixed;
@@ -43,7 +44,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: 
+      background:
         repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0, 0, 0, 0.02) 10px, rgba(0, 0, 0, 0.02) 20px);
       z-index: -1;
     }
@@ -113,7 +114,6 @@
       border-radius: 2px;
     }
 
-    /* Hamburger Menu */
     .hamburger {
       display: none;
       flex-direction: column;
@@ -140,7 +140,7 @@
       transform: rotate(-45deg) translate(6px, -6px);
     }
 
-    /* Main Content */
+    /* Main */
     main {
       padding: 120px 2rem 80px;
       min-height: 100vh;
@@ -167,66 +167,6 @@
       font-size: 1.1rem;
     }
 
-    /* Search and Add Container */
-    .search-add-container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 2rem;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-
-    #searchInput {
-      background: var(--secondary-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 1rem 1.2rem;
-      color: var(--text-primary);
-      font-size: 1rem;
-      width: 100%;
-      max-width: 400px;
-      transition: all 0.3s ease;
-      box-shadow: var(--shadow);
-    }
-
-    #searchInput::placeholder {
-      color: var(--text-secondary);
-    }
-
-    #searchInput:focus {
-      outline: none;
-      border-color: var(--accent-primary);
-      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1), var(--shadow);
-    }
-
-    .add-btn {
-      background: var(--accent-primary);
-      border: none;
-      border-radius: 12px;
-      color: white;
-      font-weight: 600;
-      font-size: 1rem;
-      padding: 1rem 2rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      white-space: nowrap;
-      box-shadow: var(--shadow);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .add-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-hover);
-    }
-
-    .add-btn:active {
-      transform: translateY(0);
-    }
-
-    /* Table Container */
     .table-container {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
@@ -245,10 +185,10 @@
       width: 100%;
       border-collapse: separate;
       border-spacing: 0;
-      overflow: hidden;
     }
 
-    th, td {
+    th,
+    td {
       padding: 1rem;
       text-align: left;
       border-bottom: 1px solid var(--border-color);
@@ -279,54 +219,81 @@
       border-bottom: none;
     }
 
-    .action-btn {
-      padding: 0.5rem 1rem;
-      margin-right: 0.5rem;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.85rem;
-      font-weight: 500;
-      transition: all 0.3s ease;
-      box-shadow: var(--shadow);
+    .status-pill {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
     }
 
-    .edit-btn {
-      background: rgba(0, 0, 0, 0.1);
-      color: var(--accent-primary);
-      border: 1px solid rgba(0, 0, 0, 0.3);
+    .status-pending {
+      background: rgba(234, 179, 8, 0.1);
+      color: #b45309;
+      border: 1px solid rgba(234, 179, 8, 0.4);
     }
 
-    .edit-btn:hover {
-      background: var(--accent-primary);
-      color: white;
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-hover);
+    .status-approved {
+      background: rgba(34, 197, 94, 0.1);
+      color: #15803d;
+      border: 1px solid rgba(34, 197, 94, 0.4);
     }
 
-    .delete-btn {
+    .status-rescheduled {
+      background: rgba(59, 130, 246, 0.1);
+      color: #1d4ed8;
+      border: 1px solid rgba(59, 130, 246, 0.4);
+    }
+
+    .status-declined {
       background: rgba(239, 68, 68, 0.1);
-      color: #ef4444;
-      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #b91c1c;
+      border: 1px solid rgba(239, 68, 68, 0.4);
     }
 
-    .delete-btn:hover {
-      background: #ef4444;
-      color: white;
-      transform: translateY(-2px);
+    .status-completed {
+      background: rgba(16, 185, 129, 0.1);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+
+    .action-btn {
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      border: none;
+      font-size: 0.8rem;
+      cursor: pointer;
+      font-weight: 500;
+      margin-right: 0.4rem;
+      box-shadow: var(--shadow);
+      transition: all 0.2s ease;
+    }
+
+    .action-btn.primary {
+      background: var(--accent-primary);
+      color: #fff;
+    }
+
+    .action-btn.danger {
+      background: rgba(239, 68, 68, 0.1);
+      color: #b91c1c;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+    }
+
+    .action-btn:hover {
+      transform: translateY(-1px);
       box-shadow: var(--shadow-hover);
     }
 
-    .nail-image {
-      width: 80px;
-      height: 80px;
-      object-fit: cover;
+    select.status-select {
+      padding: 0.35rem 0.5rem;
       border-radius: 8px;
       border: 1px solid var(--border-color);
-      box-shadow: var(--shadow);
+      font-size: 0.85rem;
+      background: var(--secondary-bg);
     }
 
-    /* Footer */
     footer {
       padding: 2rem;
       text-align: center;
@@ -336,7 +303,6 @@
       font-size: 0.9rem;
     }
 
-    /* Responsive Design */
     @media (max-width: 768px) {
       nav {
         padding: 1rem;
@@ -384,26 +350,12 @@
         font-size: 2rem;
       }
 
-      .search-add-container {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      #searchInput {
-        max-width: none;
-      }
-
       .table-container {
         overflow-x: auto;
       }
 
       table {
-        min-width: 600px;
-      }
-
-      th, td {
-        padding: 0.75rem 0.5rem;
-        font-size: 0.85rem;
+        min-width: 650px;
       }
     }
 
@@ -416,90 +368,15 @@
         padding: 1rem;
       }
 
-      th, td {
+      th,
+      td {
         padding: 0.6rem 0.4rem;
         font-size: 0.8rem;
       }
-
-      .action-btn {
-        padding: 0.4rem 0.8rem;
-        font-size: 0.8rem;
-        margin-right: 0.25rem;
-      }
-
-      .nail-image {
-        width: 40px;
-        height: 40px;
-      }
     }
-
-    /* Animation for elements */
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .fade-in {
-      animation: fadeInUp 0.6s ease forwards;
-    }
-
-    /* Empty state styling */
-    .empty-state {
-      text-align: center;
-      padding: 3rem 2rem;
-      color: var(--text-secondary);
-    }
-
-    .empty-state h3 {
-      color: var(--text-primary);
-      margin-bottom: 1rem;
-      font-size: 1.5rem;
-    }
-
-    .empty-state p {
-      margin-bottom: 1.5rem;
-      font-size: 1.1rem;
-    }
-
-    /* Status badges */
-    .status-badge {
-      padding: 0.4rem 0.8rem;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .status-available {
-      background: rgba(34, 197, 94, 0.1);
-      color: #16a34a;
-      border: 1px solid rgba(34, 197, 94, 0.3);
-    }
-
-    .status-low {
-      background: rgba(245, 158, 11, 0.1);
-      color: #d97706;
-      border: 1px solid rgba(245, 158, 11, 0.3);
-    }
-
-    .status-out {
-      background: rgba(239, 68, 68, 0.1);
-      color: #dc2626;
-      border: 1px solid rgba(239, 68, 68, 0.3);
-    }
-</style>
-  
+  </style>
 </head>
 <body>
-  <div class="particles" id="particles"></div>
-
   <nav>
     <div class="nav-container">
       <a href="dashboard.html" class="logo">Nail Care Booking</a>
@@ -517,12 +394,17 @@
   <main>
     <div class="dashboard-container">
       <div class="dashboard-header">
-        <h1 class="dashboard-title" id="dashboardTitle">Dashboard</h1>
-        <p class="dashboard-subtitle" id="dashboardSubtitle">Welcome to your dashboard</p>
+        <h1 class="dashboard-title" id="appointmentsTitle">Appointments</h1>
+        <p class="dashboard-subtitle" id="appointmentsSubtitle">View and manage appointments</p>
       </div>
 
-      <div id="dashboardContent">
-        <!-- Content will be populated by JavaScript based on role -->
+      <div class="table-container">
+        <table id="appointmentsTable">
+          <thead id="appointmentsTableHead">
+            <!-- Table headers will be populated by JavaScript based on role -->
+          </thead>
+          <tbody></tbody>
+        </table>
       </div>
     </div>
   </main>
@@ -531,16 +413,14 @@
     <p>&copy; 2025 Nail Care Booking. All rights reserved.</p>
   </footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script src="js/auth.js"></script>
-  <script src="js/main.js"></script>
-  
   <script>
     $(document).ready(function() {
       requireAuth();
       setupNav();
-      loadDashboardContent();
+      loadAppointments();
     });
 
     function setupNav() {
@@ -559,8 +439,8 @@
       let navItems = [];
       if (role === 'admin') {
         navItems = [
-          { href: 'dashboard.html', text: 'Dashboard', active: true },
-          { href: 'appointments.html', text: 'Appointments' },
+          { href: 'dashboard.html', text: 'Dashboard' },
+          { href: 'appointments.html', text: 'Appointments', active: true },
           { href: 'nail-services.html', text: 'Nail Services' },
           { href: 'manage-users.html', text: 'Manage Users' },
           { href: 'profile.html', text: 'Profile' },
@@ -568,16 +448,16 @@
         ];
       } else if (role === 'technician') {
         navItems = [
-          { href: 'dashboard.html', text: 'Dashboard', active: true },
-          { href: 'appointments.html', text: 'Appointments' },
+          { href: 'dashboard.html', text: 'Dashboard' },
+          { href: 'appointments.html', text: 'Appointments', active: true },
           { href: 'profile.html', text: 'Profile' },
           { href: '#', text: 'Logout', id: 'logoutBtn' }
         ];
       } else {
         navItems = [
-          { href: 'dashboard.html', text: 'Dashboard', active: true },
+          { href: 'dashboard.html', text: 'Dashboard' },
           { href: 'book_appointment.html', text: 'Book Appointment' },
-          { href: 'appointments.html', text: 'My Appointments' },
+          { href: 'appointments.html', text: 'My Appointments', active: true },
           { href: 'profile.html', text: 'Profile' },
           { href: '#', text: 'Logout', id: 'logoutBtn' }
         ];
@@ -596,520 +476,259 @@
       });
     }
 
-    async function loadDashboardContent() {
-      const role = localStorage.getItem('userRole') || 'client';
-      const $titleEl = $('#dashboardTitle');
-      const $subtitleEl = $('#dashboardSubtitle');
-      const $contentEl = $('#dashboardContent');
-
-      if (role === 'admin') {
-        $titleEl.text('Admin Dashboard');
-        $subtitleEl.text('Manage appointments, services, and users');
-        
-        // Load statistics for admin
-        await loadAdminStatistics($contentEl);
-      } else if (role === 'technician') {
-        $titleEl.text('Technician Dashboard');
-        $subtitleEl.text('Manage your appointments and track your work');
-        
-        // Load statistics for technician
-        await loadTechnicianStatistics($contentEl);
-      } else {
-        $titleEl.text('Client Dashboard');
-        $subtitleEl.text('Book and manage your nail care appointments');
-        $contentEl.html(`
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
-            <a href="book_appointment.html" class="table-container" style="padding: 2rem; text-align: center; text-decoration: none; color: var(--text-primary); display: block;">
-              <h3 style="margin-bottom: 0.5rem;">Book Appointment</h3>
-              <p style="color: var(--text-secondary);">Schedule a new nail care service</p>
-            </a>
-            <a href="appointments.html" class="table-container" style="padding: 2rem; text-align: center; text-decoration: none; color: var(--text-primary); display: block;">
-              <h3 style="margin-bottom: 0.5rem;">My Appointments</h3>
-              <p style="color: var(--text-secondary);">View your scheduled appointments</p>
-            </a>
-          </div>
-        `);
-      }
-    }
-
-    async function loadAdminStatistics($contentEl) {
-      try {
-        const token = localStorage.getItem('authToken');
-        
-        // Fetch all data in parallel
-        const [appointmentsRes, servicesRes, usersRes] = await Promise.all([
-          axios.get('https://nailcare.ccs4thyear.com/api/appointments', {
-            headers: { Authorization: `Bearer ${token}` }
-          }).catch(() => ({ data: [] })),
-          axios.get('https://nailcare.ccs4thyear.com/api/nail-services', {
-            headers: { Authorization: `Bearer ${token}` }
-          }).catch(() => ({ data: [] })),
-          axios.get('https://nailcare.ccs4thyear.com/api/users', {
-            headers: { Authorization: `Bearer ${token}` }
-          }).catch(() => ({ data: [] }))
-        ]);
-
-        const appointments = appointmentsRes.data || [];
-        const services = servicesRes.data || [];
-        const users = usersRes.data || [];
-        
-        const totalAppointments = appointments.length;
-        const pendingAppointments = appointments.filter(a => a.status === 'pending').length;
-        const totalServices = services.length;
-        const totalUsers = users.length;
-
-        // Role breakdown
-        const adminCount = users.filter(u => u.role === 'admin').length;
-        const technicianCount = users.filter(u => u.role === 'technician').length;
-        const clientCount = users.filter(u => u.role === 'client').length;
-
-        // Recent appointments (next 5 by date/time)
-        const recentAppointments = appointments
-          .slice()
-          .sort((a, b) => {
-            const dateA = new Date(a.date + ' ' + (a.time || '00:00:00'));
-            const dateB = new Date(b.date + ' ' + (b.time || '00:00:00'));
-            return dateB - dateA;
-          })
-          .slice(0, 5);
-
-        const recentAppointmentsHtml = recentAppointments.length
-          ? `<div style="overflow-x:auto;">
-              <table style="width:100%; border-collapse:collapse;">
-                <thead>
-                  <tr style="border-bottom: 1px solid var(--border-color);">
-                    <th style="padding:0.75rem; text-align:left; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em;">Client</th>
-                    <th style="padding:0.75rem; text-align:left; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em;">Service</th>
-                    <th style="padding:0.75rem; text-align:left; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em;">Date</th>
-                    <th style="padding:0.75rem; text-align:left; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em;">Time</th>
-                    <th style="padding:0.75rem; text-align:left; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em;">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${recentAppointments.map(a => {
-                    const appointmentDate = new Date(a.date);
-                    const dateStr = isNaN(appointmentDate.getTime())
-                      ? (a.date || '-')
-                      : appointmentDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-
-                    let timeStr = a.time || '';
-                    if (typeof timeStr === 'string' && timeStr.includes(' ')) {
-                      timeStr = timeStr.split(' ')[1];
-                    }
-                    timeStr = timeStr.substring(0, 8);
-                    const timeRangeMap = {
-                      '08:00:00': '8:00 AM – 10:00 AM',
-                      '10:00:00': '10:00 AM – 12:00 PM',
-                      '13:00:00': '1:00 PM – 3:00 PM',
-                      '15:00:00': '3:00 PM – 5:00 PM'
-                    };
-                    const displayTime = timeRangeMap[timeStr] || (timeStr || '-');
-
-                    const statusColors = {
-                      'pending': '#f59e0b',
-                      'approved': '#3b82f6',
-                      'completed': '#10b981',
-                      'declined': '#ef4444'
-                    };
-                    const statusColor = statusColors[a.status] || '#6b7280';
-                    const clientName = a.customer ? ((a.customer.firstname || '') + ' ' + (a.customer.lastname || '')).trim() : '-';
-
-                    return `
-                      <tr style="border-bottom: 1px solid var(--border-color);">
-                        <td style="padding:0.75rem; font-size:0.9rem;">${clientName || '-'}</td>
-                        <td style="padding:0.75rem; font-size:0.9rem;">${a.service_name || '-'}</td>
-                        <td style="padding:0.75rem; font-size:0.9rem;">${dateStr}</td>
-                        <td style="padding:0.75rem; font-size:0.9rem;">${displayTime}</td>
-                        <td style="padding:0.75rem; font-size:0.9rem;">
-                          <span style="padding:0.2rem 0.7rem; border-radius:999px; font-size:0.8rem; background:${statusColor}20; color:${statusColor};">
-                            ${a.status ? (a.status.charAt(0).toUpperCase() + a.status.slice(1)) : '-'}
-                          </span>
-                        </td>
-                      </tr>
-                    `;
-                  }).join('')}
-                </tbody>
-              </table>
-            </div>`
-          : '<p style="text-align:center; color: var(--text-secondary); padding: 1.5rem 0;">No appointments yet.</p>';
-
-        $contentEl.html(`
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
-            <div class="table-container" style="padding: 1.75rem; background: linear-gradient(135deg, #000000, #333333); color: #ffffff;">
-              <p style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.8; margin-bottom: 0.5rem;">Total Appointments</p>
-              <h3 style="font-size: 2.4rem; margin-bottom: 0.25rem;">${totalAppointments}</h3>
-              <p style="font-size: 0.9rem; opacity: 0.9;">All-time bookings in the system</p>
-            </div>
-            <div class="table-container" style="padding: 1.75rem;">
-              <p style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-secondary); margin-bottom: 0.5rem;">Pending</p>
-              <h3 style="font-size: 2.2rem; margin-bottom: 0.25rem; color: #f59e0b;">${pendingAppointments}</h3>
-              <p style="font-size: 0.9rem; color: var(--text-secondary);">Awaiting approval</p>
-            </div>
-            <div class="table-container" style="padding: 1.75rem;">
-              <p style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-secondary); margin-bottom: 0.5rem;">Nail Services</p>
-              <h3 style="font-size: 2.2rem; margin-bottom: 0.25rem; color: var(--accent-primary);">${totalServices}</h3>
-              <p style="font-size: 0.9rem; color: var(--text-secondary);">Active services offered</p>
-            </div>
-            <div class="table-container" style="padding: 1.75rem;">
-              <p style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-secondary); margin-bottom: 0.5rem;">Total Users</p>
-              <h3 style="font-size: 2.2rem; margin-bottom: 0.25rem; color: var(--accent-primary);">${totalUsers}</h3>
-              <p style="font-size: 0.9rem; color: var(--text-secondary);">Admins, technicians, and clients</p>
-            </div>
-          </div>
-
-          <div style="display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1.2fr); gap: 1.5rem; margin-bottom: 2rem; flex-wrap: wrap;">
-            <div class="table-container" style="min-width: 0;">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
-                <h3 style="font-size: 1.1rem;">Recent Appointments</h3>
-                <a href="appointments.html" style="font-size:0.85rem; color: var(--accent-primary); text-decoration: none;">View all →</a>
-              </div>
-              ${recentAppointmentsHtml}
-            </div>
-
-            <div class="table-container" style="min-width:0;">
-              <h3 style="margin-bottom: 1rem; font-size: 1.1rem;">User Overview</h3>
-              <div style="display:flex; flex-direction:column; gap:0.75rem;">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                  <div>
-                    <p style="font-size:0.9rem;">Admins</p>
-                    <p style="font-size:0.8rem; color: var(--text-secondary);">Full access</p>
-                  </div>
-                  <span style="font-weight:600;">${adminCount}</span>
-                </div>
-                <div style="height:4px; border-radius:999px; background:var(--secondary-bg); overflow:hidden;">
-                  <div style="width:${totalUsers ? (adminCount / totalUsers) * 100 : 0}%; height:100%; background:#000000;"></div>
-                </div>
-
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.75rem;">
-                  <div>
-                    <p style="font-size:0.9rem;">Technicians</p>
-                    <p style="font-size:0.8rem; color: var(--text-secondary);">Service providers</p>
-                  </div>
-                  <span style="font-weight:600;">${technicianCount}</span>
-                </div>
-                <div style="height:4px; border-radius:999px; background:var(--secondary-bg); overflow:hidden;">
-                  <div style="width:${totalUsers ? (technicianCount / totalUsers) * 100 : 0}%; height:100%; background:#4b5563;"></div>
-                </div>
-
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.75rem;">
-                  <div>
-                    <p style="font-size:0.9rem;">Clients</p>
-                    <p style="font-size:0.8rem; color: var(--text-secondary);">Booking customers</p>
-                  </div>
-                  <span style="font-weight:600;">${clientCount}</span>
-                </div>
-                <div style="height:4px; border-radius:999px; background:var(--secondary-bg); overflow:hidden;">
-                  <div style="width:${totalUsers ? (clientCount / totalUsers) * 100 : 0}%; height:100%; background:#9ca3af;"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="table-container">
-            <h3 style="margin-bottom: 1rem;">Quick Actions</h3>
-            <div style="display:flex; flex-wrap:wrap; gap:0.75rem;">
-              <a href="appointments.html" style="padding:0.85rem 1.6rem; background: var(--accent-primary); color:#ffffff; text-decoration:none; border-radius:999px; font-size:0.9rem;">📅 View Appointments</a>
-              <a href="nail-services.html" style="padding:0.85rem 1.6rem; background:#111827; color:#ffffff; text-decoration:none; border-radius:999px; font-size:0.9rem;">💅 Manage Services</a>
-              <a href="manage-users.html" style="padding:0.85rem 1.6rem; background:#374151; color:#ffffff; text-decoration:none; border-radius:999px; font-size:0.9rem;">👤 Manage Users</a>
-            </div>
-          </div>
-        `);
-      } catch (err) {
-        console.error('Error loading admin statistics:', err);
-        // Fallback: simple zeroed dashboard with quick links
-        $contentEl.html(`
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
-            <div class="table-container" style="padding: 1.75rem; text-align: center;">
-              <h3 style="font-size: 2rem; margin-bottom: 0.25rem;">0</h3>
-              <p style="color: var(--text-secondary);">Total Appointments</p>
-            </div>
-            <div class="table-container" style="padding: 1.75rem; text-align: center;">
-              <h3 style="font-size: 2rem; margin-bottom: 0.25rem;">0</h3>
-              <p style="color: var(--text-secondary);">Pending Appointments</p>
-            </div>
-            <div class="table-container" style="padding: 1.75rem; text-align: center;">
-              <h3 style="font-size: 2rem; margin-bottom: 0.25rem;">0</h3>
-              <p style="color: var(--text-secondary);">Nail Services</p>
-            </div>
-            <div class="table-container" style="padding: 1.75rem; text-align: center;">
-              <h3 style="font-size: 2rem; margin-bottom: 0.25rem;">0</h3>
-              <p style="color: var(--text-secondary);">Total Users</p>
-            </div>
-          </div>
-          <div class="table-container">
-            <h3 style="margin-bottom: 1rem;">Quick Actions</h3>
-            <div style="display:flex; flex-wrap:wrap; gap:0.75rem;">
-              <a href="appointments.html" style="padding:0.85rem 1.6rem; background: var(--accent-primary); color:#ffffff; text-decoration:none; border-radius:999px; font-size:0.9rem;">📅 View Appointments</a>
-              <a href="nail-services.html" style="padding:0.85rem 1.6rem; background:#111827; color:#ffffff; text-decoration:none; border-radius:999px; font-size:0.9rem;">💅 Manage Services</a>
-              <a href="manage-users.html" style="padding:0.85rem 1.6rem; background:#374151; color:#ffffff; text-decoration:none; border-radius:999px; font-size:0.9rem;">👤 Manage Users</a>
-            </div>
-          </div>
-        `);
-      }
-    }
-
-    async function loadTechnicianStatistics($contentEl) {
-      try {
-        const token = localStorage.getItem('authToken');
-        
-        // Fetch appointments for this technician
-        const appointmentsRes = await axios.get('https://nailcare.ccs4thyear.com/api/appointments', {
-          headers: { Authorization: `Bearer ${token}` }
-        }).catch(() => ({ data: [] }));
-
-        const appointments = appointmentsRes.data || [];
-        
-        // Calculate statistics
-        const totalAppointments = appointments.length;
-        const pendingAppointments = appointments.filter(a => a.status === 'pending').length;
-        const approvedAppointments = appointments.filter(a => a.status === 'approved').length;
-        const completedAppointments = appointments.filter(a => a.status === 'completed').length;
-        
-        // Get today's date for filtering
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        
-        // Count today's appointments
-        const todayAppointments = appointments.filter(a => {
-          const appointmentDate = new Date(a.date);
-          appointmentDate.setHours(0, 0, 0, 0);
-          return appointmentDate.getTime() === today.getTime() && 
-                 (a.status === 'approved' || a.status === 'pending');
-        }).length;
-        
-        // Get upcoming appointments (approved, date >= today)
-        const upcomingAppointments = appointments
-          .filter(a => {
-            const appointmentDate = new Date(a.date);
-            appointmentDate.setHours(0, 0, 0, 0);
-            return (a.status === 'approved' || a.status === 'pending') && 
-                   appointmentDate.getTime() >= today.getTime();
-          })
-          .sort((a, b) => {
-            const dateA = new Date(a.date + ' ' + a.time);
-            const dateB = new Date(b.date + ' ' + b.time);
-            return dateA - dateB;
-          })
-          .slice(0, 5); // Show only next 5
-
-        const upcomingAppointmentsHtml = upcomingAppointments.length > 0
-          ? `<div style="overflow-x: auto;">
-              <table style="width: 100%; border-collapse: collapse;">
-                <thead>
-                  <tr style="border-bottom: 2px solid var(--border-color);">
-                    <th style="padding: 1rem; text-align: left;">Client</th>
-                    <th style="padding: 1rem; text-align: left;">Service</th>
-                    <th style="padding: 1rem; text-align: left;">Date</th>
-                    <th style="padding: 1rem; text-align: left;">Time</th>
-                    <th style="padding: 1rem; text-align: left;">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${upcomingAppointments.map(a => {
-                    const appointmentDate = new Date(a.date);
-                    const dateStr = appointmentDate.toLocaleDateString('en-US', { 
-                      month: 'short', 
-                      day: 'numeric', 
-                      year: 'numeric' 
-                    });
-                    
-                    let timeStr = a.time;
-                    if (typeof timeStr === 'string' && timeStr.includes(' ')) {
-                      timeStr = timeStr.split(' ')[1];
-                    }
-                    timeStr = timeStr.substring(0, 8);
-                    const timeRangeMap = {
-                      '08:00:00': '8:00 AM – 10:00 AM',
-                      '10:00:00': '10:00 AM – 12:00 PM',
-                      '13:00:00': '1:00 PM – 3:00 PM',
-                      '15:00:00': '3:00 PM – 5:00 PM'
-                    };
-                    const displayTime = timeRangeMap[timeStr] || timeStr;
-                    
-                    const statusColors = {
-                      'pending': '#f59e0b',
-                      'approved': '#3b82f6',
-                      'completed': '#10b981',
-                      'declined': '#ef4444'
-                    };
-                    
-                    return `
-                      <tr style="border-bottom: 1px solid var(--border-color);">
-                        <td style="padding: 1rem;">${a.customer ? (a.customer.firstname + ' ' + a.customer.lastname) : '-'}</td>
-                        <td style="padding: 1rem;">${a.service_name || '-'}</td>
-                        <td style="padding: 1rem;">${dateStr}</td>
-                        <td style="padding: 1rem;">${displayTime}</td>
-                        <td style="padding: 1rem;">
-                          <span style="padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.875rem; background: ${(statusColors[a.status] || '#6b7280')}20; color: ${statusColors[a.status] || '#6b7280'};">
-                            ${a.status.charAt(0).toUpperCase() + a.status.slice(1)}
-                          </span>
-                        </td>
-                      </tr>
-                    `;
-                  }).join('')}
-                </tbody>
-              </table>
-            </div>`
-          : '<p style="text-align: center; color: var(--text-secondary); padding: 2rem;">No upcoming appointments</p>';
-
-        $contentEl.html(`
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
-            <div class="table-container" style="padding: 2rem; text-align: center;">
-              <h3 style="font-size: 2rem; margin-bottom: 0.5rem; color: var(--accent-primary);">${totalAppointments}</h3>
-              <p style="color: var(--text-secondary);">Total Appointments</p>
-            </div>
-            <div class="table-container" style="padding: 2rem; text-align: center;">
-              <h3 style="font-size: 2rem; margin-bottom: 0.5rem; color: #f59e0b;">${pendingAppointments}</h3>
-              <p style="color: var(--text-secondary);">Pending</p>
-            </div>
-            <div class="table-container" style="padding: 2rem; text-align: center;">
-              <h3 style="font-size: 2rem; margin-bottom: 0.5rem; color: #3b82f6;">${approvedAppointments}</h3>
-              <p style="color: var(--text-secondary);">Approved</p>
-            </div>
-            <div class="table-container" style="padding: 2rem; text-align: center;">
-              <h3 style="font-size: 2rem; margin-bottom: 0.5rem; color: #10b981;">${completedAppointments}</h3>
-              <p style="color: var(--text-secondary);">Completed</p>
-            </div>
-            <div class="table-container" style="padding: 2rem; text-align: center;">
-              <h3 style="font-size: 2rem; margin-bottom: 0.5rem; color: var(--accent-primary);">${todayAppointments}</h3>
-              <p style="color: var(--text-secondary);">Today's Appointments</p>
-            </div>
-          </div>
-          
-          <div class="table-container" style="margin-bottom: 2rem;">
-            <h3 style="margin-bottom: 1rem;">Upcoming Appointments</h3>
-            ${upcomingAppointmentsHtml}
-          </div>
-          
-          <div class="table-container">
-            <h3 style="margin-bottom: 1rem;">Quick Actions</h3>
-            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-              <a href="appointments.html" style="padding: 1rem 2rem; background: var(--accent-primary); color: white; text-decoration: none; border-radius: 8px; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">View All Appointments</a>
-              <a href="profile.html" style="padding: 1rem 2rem; background: var(--accent-secondary); color: white; text-decoration: none; border-radius: 8px; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">Update Profile</a>
-            </div>
-          </div>
-        `);
-      } catch (err) {
-        console.error('Error loading technician statistics:', err);
-        $contentEl.html(`
-          <div class="table-container">
-            <p style="text-align: center; color: var(--text-secondary); padding: 2rem;">
-              Failed to load dashboard data. <a href="appointments.html" style="color: var(--accent-primary); text-decoration: underline;">View your appointments</a>
-            </p>
-          </div>
-        `);
-      }
-    }
-
     function logout() {
       localStorage.removeItem('authToken');
       localStorage.removeItem('userRole');
       window.location.href = 'login.html';
     }
 
-    async function validateTokenAndLoadNailServices() {
-      try {
-        const token = localStorage.getItem('authToken');
-        if (!token) {
-          window.location.href = 'login.html';
-          return;
-        }
-
-        // Validate token by making a test request
-        const validationRes = await fetch("https://nailcare.ccs4thyear.com/api/nail-services", {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-
-        if (validationRes.status === 401) {
-          // Token is invalid
-          localStorage.removeItem('authToken');
-          alert('Session expired or invalid token. Please login again.');
-          window.location.href = 'login.html';
-          return;
-        }
-
-        if (!validationRes.ok) {
-          throw new Error('Token validation failed');
-        }
-
-        // Token is valid, load nail services
-        await loadNailServices();
-
-      } catch (err) {
-        console.error("Token validation failed:", err);
-        localStorage.removeItem('authToken');
-        alert('Authentication failed. Please login again.');
-        window.location.href = 'login.html';
-      }
+    function currentRole() {
+      return localStorage.getItem("userRole") || "client";
     }
 
-    async function handleUnauthorizedResponse(response) {
-      if (response.status === 401) {
-        localStorage.removeItem('authToken');
-        alert('Session expired or invalid token. Please login again.');
-        window.location.href = 'login.html';
-        return true;
-      }
-      return false;
+    function formatStatus(status) {
+      const cls = `status-pill status-${status}`;
+      return `<span class="${cls}">${status}</span>`;
     }
 
-    async function loadNailServices() {
-      try {
-        const token = localStorage.getItem('authToken');
-        if (!token) {
-          window.location.href = 'login.html';
-          return;
-          
-        }
+    function formatDate(dateStr) {
+      if (!dateStr) return "-";
+      const date = new Date(dateStr);
+      return date.toLocaleDateString();
+    }
 
-        const res = await fetch("https://nailcare.ccs4thyear.com/api/nail-services", {
-          headers: { 'Authorization': `Bearer ${token}` }
+    function formatTime(timeStr) {
+      if (!timeStr) return "-";
+      
+      // Map stored time values to their time ranges (matching book_appointment.html)
+      const timeRangeMap = {
+        '08:00:00': '8:00 AM – 10:00 AM',
+        '10:00:00': '10:00 AM – 12:00 PM',
+        '13:00:00': '1:00 PM – 3:00 PM',
+        '15:00:00': '3:00 PM – 5:00 PM'
+      };
+      
+      // Convert timeStr to string if it's not already
+      timeStr = String(timeStr);
+      
+      // If time is in format "HH:MM:SS", check if it matches a known range
+      if (timeStr.includes(':')) {
+        // Extract just the time part (HH:MM:SS)
+        // Handle different formats: "08:00:00" or "2024-01-01 08:00:00" or datetime objects
+        let timeKey = timeStr;
+        
+        // If it contains a space, it might be a datetime string
+        if (timeStr.includes(' ')) {
+          const parts = timeStr.split(' ');
+          timeKey = parts[parts.length - 1]; // Get the last part (time)
+        }
+        
+        // Extract HH:MM:SS format (first 8 characters)
+        if (timeKey.length >= 8) {
+          timeKey = timeKey.substring(0, 8);
+        }
+        
+        // Check if we have a mapped range for this time
+        if (timeRangeMap[timeKey]) {
+          return timeRangeMap[timeKey];
+        }
+        
+        // Fallback: convert to readable format if not in map
+        const timeParts = timeKey.split(':');
+        if (timeParts.length >= 2) {
+          const hour = parseInt(timeParts[0]) || 0;
+          const minutes = timeParts[1] || '00';
+          const ampm = hour >= 12 ? 'PM' : 'AM';
+          const displayHour = hour % 12 || 12;
+          return `${displayHour}:${minutes} ${ampm}`;
+        }
+      }
+      return timeStr;
+    }
+
+    async function loadAppointments() {
+      const token = localStorage.getItem("authToken");
+      const role = currentRole();
+
+      // Update title and subtitle based on role
+      const $titleEl = $('#appointmentsTitle');
+      const $subtitleEl = $('#appointmentsSubtitle');
+      const $theadEl = $('#appointmentsTableHead');
+
+      if (role === 'admin') {
+        $titleEl.text('All Nail Care Appointments');
+        $subtitleEl.text('Manage all appointments');
+        $theadEl.html(`
+          <tr>
+            <th>ID</th>
+            <th>Client Name</th>
+            <th>Nail Service</th>
+            <th>Technician</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        `);
+      } else if (role === 'technician') {
+        $titleEl.text('My Appointments');
+        $subtitleEl.text('View and manage appointments assigned to you');
+        $theadEl.html(`
+          <tr>
+            <th>ID</th>
+            <th>Client Name</th>
+            <th>Nail Care Service</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        `);
+      } else {
+        $titleEl.text('My Appointments');
+        $subtitleEl.text('View and manage your appointments');
+        $theadEl.html(`
+          <tr>
+            <th>Image</th>
+            <th>Service Name</th>
+            <th>Technician</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        `);
+      }
+
+      try {
+        const res = await axios.get("https://nailcare.ccs4thyear.com/api/appointments", {
+          headers: { Authorization: `Bearer ${token}` },
         });
 
-        if (await handleUnauthorizedResponse(res)) return;
-
-        const nailServices = await res.json();
-        const $tbody = $("#nailServicesTable tbody");
+        const $tbody = $("#appointmentsTable tbody");
         $tbody.empty();
 
-        const baseUrl = "https://nailcare.ccs4thyear.com/";
+        if (res.data.length === 0) {
+          $tbody.html(`<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-secondary);">No appointments found</td></tr>`);
+          return;
+        }
 
-        nailServices.forEach(service => {
-          const $tr = $(`
-            <tr>
-              <td>${service.id}</td>
-              <td>${service.service_name}</td>
-              <td>₱${parseFloat(service.price).toFixed(2)}</td>
-              <td>
-                <img
-                  src="${baseUrl}${service.image_path || 'uploads/default.png'}"
-                  alt="${service.service_name}"
-                  style="max-width:100px;"
-                  onerror="this.onerror=null;this.src='${baseUrl}uploads/default.png';"
-                >
-              </td>
-              <td>
-                <button class="action-btn edit-btn" onclick="editNailService(${service.id})">Edit</button>
-                <button class="action-btn delete-btn" data-id="${service.id}">Delete</button>
-              </td>
-            </tr>
-          `);
+        res.data.forEach((a) => {
+          let rowHtml = "";
 
+          if (role === "admin") {
+            let actionsHtml = "";
+            if (a.status === "pending") {
+              actionsHtml = `
+                <button type="button" class="action-btn primary" onclick="approveAppointment(${a.id})">Approve</button>
+                <button type="button" class="action-btn danger" onclick="declineAppointment(${a.id})">Decline</button>
+              `;
+            }
+
+rowHtml = `
+  <td>${a.id}</td>
+  <td>${a.customer ? `${a.customer.firstname} ${a.customer.lastname}` : "-"}</td>
+  <td>${a.service_name || "-"}</td>
+  <td>
+    ${a.technician
+      ? `${a.technician.firstname} ${a.technician.lastname}`
+      : "-"}
+  </td>
+  <td>${formatDate(a.date)}</td>
+  <td>${formatTime(a.time)}</td>
+  <td>${formatStatus(a.status)}</td>
+  <td>${actionsHtml}</td>
+`;
+          } else if (role === "technician") {
+            // Add "Mark as Completed" button for approved appointments
+            let actionsHtml = "";
+            if (a.status === "approved") {
+              actionsHtml = `<button type="button" class="action-btn primary" onclick="markAsCompleted(${a.id})">Mark as Completed</button>`;
+            }
+            
+            rowHtml = `
+              <td>${a.id}</td>
+              <td>${a.customer ? (a.customer.firstname + ' ' + a.customer.lastname) : "-"}</td>
+              <td>${a.service_name || "-"}</td>
+              <td>${formatDate(a.date)}</td>
+              <td>${formatTime(a.time)}</td>
+              <td>${formatStatus(a.status)}</td>
+              <td>${actionsHtml}</td>
+            `;
+          } else {
+            // Client view
+            const serviceImage = a.service_image || 'uploads/default.png';
+            // Allow rescheduling only for pending and declined appointments, NOT for approved
+            const rescheduleBtn = (a.status === 'pending' || a.status === 'declined')
+              ? `<button type="button" class="action-btn primary" onclick="rescheduleAppointment(${a.id})">Reschedule</button>`
+              : '';
+            // Allow cancelling only when status is pending
+            const cancelBtn = (a.status === 'pending')
+              ? `<button type="button" class="action-btn danger" onclick="cancelAppointment(${a.id})">Cancel</button>`
+              : '';
+            
+            rowHtml = `
+              <td><img src="https://nailcare.ccs4thyear.com/${serviceImage}" alt="${a.service_name}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;"></td>
+              <td>${a.service_name || "-"}</td>
+              <td>${a.technician ? a.technician.name : "-"}</td>
+              <td>${formatDate(a.date)}</td>
+              <td>${formatTime(a.time)}</td>
+              <td>${formatStatus(a.status)}</td>
+              <td>${rescheduleBtn} ${cancelBtn}</td>
+            `;
+          }
+
+          const $tr = $('<tr>').html(rowHtml);
           $tbody.append($tr);
         });
-
-        // Add event listeners for delete buttons
-        $('.delete-btn').on('click', function() {
-          const nailServiceId = $(this).attr('data-id');
-          deleteSnack(nailServiceId); // TODO: rename deleteSnack to deleteNailService when backend/frontend are aligned
-        });
-
       } catch (err) {
-        console.error("Failed to load nail services:", err);
-        alert("Failed to load nail services. Please try again.");
+        console.error("Load appointments error:", err);
+        alert("Failed to load appointments.");
       }
     }
 
+    async function approveAppointment(id) {
+      if (!confirm("Approve this appointment?")) return;
+      await updateAppointmentStatus(id, 'approved');
+    }
+
+    async function declineAppointment(id) {
+      if (!confirm("Decline this appointment?")) return;
+      await updateAppointmentStatus(id, 'declined');
+    }
+
+    async function markAsCompleted(id) {
+      if (!confirm("Mark this appointment as completed?")) return;
+      await updateAppointmentStatus(id, 'completed');
+    }
+
+    async function rescheduleAppointment(id) {
+      // Redirect to booking page with appointment ID for rescheduling
+      window.location.href = `book_appointment.html?reschedule=${id}`;
+    }
+
+    async function updateAppointmentStatus(id, status = null) {
+      const token = localStorage.getItem("authToken");
+      const newStatus = status || 'approved';
+
+      try {
+        await axios.put(
+          `https://nailcare.ccs4thyear.com/api/appointments/${id}`,
+          { status: newStatus },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        alert("Appointment " + newStatus + " successfully.");
+        loadAppointments();
+      } catch (err) {
+        console.error("Update status error:", err);
+        alert("Failed to update status.");
+      }
+    }
+
+    async function cancelAppointment(id) {
+      if (!confirm("Cancel this appointment?")) return;
+      await updateAppointmentStatus(id, 'canceled');
+    }
   </script>
 </body>
 </html>
