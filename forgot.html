@@ -475,7 +475,7 @@
 
       <!-- Step 2: Verify OTP -->
       <div id="step-otp" style="display:none;">
-        <input type="text" id="otpInput" placeholder="Enter OTP" maxlength="6" required>
+        <input type="text" id="otpInput" inputmode="numeric" pattern="[0-9]*" placeholder="Enter OTP" maxlength="6" required>
         <button id="verifyOtpBtn">Verify OTP</button>
         <p id="otpMsg" class="error-message"></p>
       </div>
