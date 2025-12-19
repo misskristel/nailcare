@@ -1,80 +1,258 @@
-// auth.js
+const API_URL = 'https://nailcare.ccs4thyear.com';
 
-function requireAuth() {
-  const token = localStorage.getItem('authToken');
-  if (!token || typeof token !== 'string' || token.length < 10) {
-    localStorage.removeItem('authToken');
-    alert('Session expired or invalid token. Please log in again.');
-    window.location.href = 'login.html';
-  }
-}
+// DOM elements
+const $stepEmail = $('#step-email');
+const $stepOtp = $('#step-otp');
+const $stepReset = $('#step-reset');
 
-function redirectIfLoggedIn() {
-  const token = localStorage.getItem('authToken');
-  if (token) {
-    window.location.href = 'dashboard.html';
-  }
-}
+const $forgotEmailInput = $('#forgotEmail');
+const $otpInput = $('#otpInput');
+const $newPasswordInput = $('#newPassword');
+const $confirmPasswordInput = $('#confirmPassword');
 
-// A helper function to wrap axios calls and handle 401 Unauthorized
-async function authAxios(config = {}) {
-  const token = localStorage.getItem('authToken');
-  config.headers = config.headers || {};
-  if (token) {
-    config.headers['Authorization'] = `Bearer ${token}`;
-  }
+const $sendOtpBtn = $('#sendOtpBtn');
+const $verifyOtpBtn = $('#verifyOtpBtn');
+const $resetPasswordBtn = $('#resetPasswordBtn');
 
-  try {
-    const response = await axios(config);
-    return response;
-  } catch (error) {
-    if (error.response && error.response.status === 401) {
-      localStorage.removeItem('authToken');
-      alert('Session expired or invalid token. Please log in again.');
-      window.location.href = 'login.html';
-      return null; // Stop further processing
+const $emailMsg = $('#emailMsg');
+const $otpMsg = $('#otpMsg');
+const $resetMsg = $('#resetMsg');
+
+// Global variables to store data
+let userEmail = '';
+let verifiedOtp = '';
+
+// Step 1: Send OTP
+$sendOtpBtn.on('click', async function() {
+    const email = $forgotEmailInput.val().trim();
+    
+    if (!email) {
+        showMessage($emailMsg, 'Please enter your email address.', 'error');
+        return;
     }
-    throw error; // Re-throw other errors
-  }
+
+    if (!isValidEmail(email)) {
+        showMessage($emailMsg, 'Please enter a valid email address.', 'error');
+        return;
+    }
+
+    try {
+        $sendOtpBtn.prop('disabled', true);
+        $sendOtpBtn.text('Sending...');
+        
+        const response = await axios.post(`${API_URL}/api/forgot-password/send-otp`, { email });
+
+        if (response.status === 200) {
+            // Store email BEFORE showing success message
+            userEmail = email;
+            console.log('Email stored:', userEmail);
+            showMessage($emailMsg, response.data.message, 'success');
+            
+            // Move to step 2 after 1 second
+            setTimeout(() => {
+                if (window.showStep) {
+                    window.showStep('step-otp');
+                } else {
+                    $stepEmail.hide();
+                    $stepOtp.show();
+                }
+            }, 1000);
+        } else {
+            showMessage($emailMsg, response.data.error, 'error');
+        }
+    } catch (error) {
+        console.error('Send OTP Error:', error);
+        if (error.response && error.response.data && error.response.data.error) {
+            showMessage($emailMsg, error.response.data.error, 'error');
+        } else {
+            showMessage($emailMsg, 'Network error. Please try again.', 'error');
+        }
+    } finally {
+        $sendOtpBtn.prop('disabled', false);
+        $sendOtpBtn.text('Send OTP');
+    }
+});
+
+// Step 2: Verify OTP
+$verifyOtpBtn.on('click', async function() {
+    const otp = $otpInput.val().trim();
+    
+    if (!otp) {
+        showMessage($otpMsg, 'Please enter the OTP.', 'error');
+        return;
+    }
+
+    if (otp.length !== 6) {
+        showMessage($otpMsg, 'OTP must be 6 digits.', 'error');
+        return;
+    }
+
+    try {
+        $verifyOtpBtn.prop('disabled', true);
+        $verifyOtpBtn.text('Verifying...');
+        
+        const response = await axios.post(`${API_URL}/api/forgot-password/verify-otp`, { 
+            email: userEmail, 
+            otp: otp 
+        });
+
+        if (response.status === 200) {
+            // Store the OTP BEFORE showing success message
+            verifiedOtp = otp;
+            console.log('OTP verified and stored:', verifiedOtp);
+            console.log('Email is:', userEmail);
+            showMessage($otpMsg, response.data.message, 'success');
+            
+            // Move to step 3 after 1 second
+            setTimeout(() => {
+                if (window.showStep) {
+                    window.showStep('step-reset');
+                } else {
+                    $stepOtp.hide();
+                    $stepReset.show();
+                }
+            }, 1000);
+        } else {
+            showMessage($otpMsg, response.data.error, 'error');
+        }
+    } catch (error) {
+        console.error('Verify OTP Error:', error);
+        if (error.response && error.response.data && error.response.data.error) {
+            showMessage($otpMsg, error.response.data.error, 'error');
+        } else {
+            showMessage($otpMsg, 'Network error. Please try again.', 'error');
+        }
+    } finally {
+        $verifyOtpBtn.prop('disabled', false);
+        $verifyOtpBtn.text('Verify OTP');
+    }
+});
+
+// Step 3: Reset Password
+$resetPasswordBtn.on('click', async function() {
+    const newPassword = $newPasswordInput.val();
+    const confirmPassword = $confirmPasswordInput.val();
+    
+    // Add debug logging
+    console.log('Reset attempt with:');
+    console.log('- Email:', userEmail);
+    console.log('- OTP:', verifiedOtp);
+    console.log('- New password length:', newPassword.length);
+    
+    if (!newPassword || !confirmPassword) {
+        showMessage($resetMsg, 'Please fill in all fields.', 'error');
+        return;
+    }
+
+    if (newPassword.length < 6) {
+        showMessage($resetMsg, 'Password must be at least 6 characters.', 'error');
+        return;
+    }
+
+    if (newPassword !== confirmPassword) {
+        showMessage($resetMsg, 'Passwords do not match.', 'error');
+        return;
+    }
+
+    // Verify we have email and OTP
+    if (!userEmail || !verifiedOtp) {
+        showMessage($resetMsg, 'Session expired. Please start over.', 'error');
+        setTimeout(() => {
+            window.location.href = 'forgot.html';
+        }, 2000);
+        return;
+    }
+
+    try {
+        $resetPasswordBtn.prop('disabled', true);
+        $resetPasswordBtn.text('Resetting...');
+        
+        const response = await axios.post(`${API_URL}/api/forgot-password/reset`, { 
+            email: userEmail, 
+            otp: verifiedOtp,
+            new_password: newPassword
+        });
+
+        if (response.status === 200) {
+            showMessage($resetMsg, response.data.message, 'success');
+            
+            // Clear stored data
+            userEmail = '';
+            verifiedOtp = '';
+            
+            // Redirect to login after 2 seconds
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 2000);
+        } else {
+            console.error('Reset failed:', response.data);
+            showMessage($resetMsg, response.data.error, 'error');
+        }
+    } catch (error) {
+        console.error('Reset Password Error:', error);
+        if (error.response && error.response.data && error.response.data.error) {
+            showMessage($resetMsg, error.response.data.error, 'error');
+        } else {
+            showMessage($resetMsg, 'Network error. Please try again.', 'error');
+        }
+    } finally {
+        $resetPasswordBtn.prop('disabled', false);
+        $resetPasswordBtn.text('Reset Password');
+    }
+});
+
+// Utility functions
+function showMessage($element, message, type) {
+    $element.text(message);
+    $element.removeClass('success-message error-message').addClass(type === 'success' ? 'success-message' : 'error-message');
+    $element.show();
+    
+    // Hide message after 5 seconds
+    setTimeout(() => {
+        $element.hide();
+    }, 5000);
 }
 
-/**
- * Configure a code/OTP input field to use numeric keypad on mobile devices
- * This function should be called for all verification code inputs
- * @param {string|jQuery} selector - CSS selector or jQuery object for the input field
- */
-function configureCodeInput(selector) {
-  const $input = typeof selector === 'string' ? $(selector) : selector;
-  
-  if ($input.length) {
-    // Set attributes for numeric keypad
-    $input.attr({
-      'type': 'tel',
-      'inputmode': 'numeric',
-      'pattern': '[0-9]*'
+function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+// Ensure OTP input uses numeric keypad on mobile devices
+// Using the global utility function from auth.js
+if (typeof configureCodeInput === 'function') {
+    configureCodeInput($otpInput);
+} else {
+    // Fallback if utility function is not available
+    $otpInput.attr({
+        'type': 'tel',
+        'inputmode': 'numeric',
+        'pattern': '[0-9]*'
     });
     
-    // Ensure only numbers can be entered
-    $input.on('input', function() {
-      $(this).val($(this).val().replace(/[^0-9]/g, ''));
+    // Allow only numbers in OTP input
+    $otpInput.on('input', function() {
+        $(this).val($(this).val().replace(/[^0-9]/g, ''));
     });
-  }
 }
 
-// Auto-configure all common code input selectors when DOM is ready
-$(document).ready(function() {
-  // Configure all OTP/code inputs that might exist
-  // Use a small delay to ensure all inputs are rendered
-  setTimeout(function() {
-    configureCodeInput('#otpInput');
-    configureCodeInput('#verificationCode');
-    configureCodeInput('#verifyCode');
-    configureCodeInput('#codeInput');
-    configureCodeInput('input[placeholder*="OTP"]');
-    configureCodeInput('input[placeholder*="otp"]');
-    configureCodeInput('input[placeholder*="code"]');
-    configureCodeInput('input[placeholder*="Code"]');
-    configureCodeInput('input[placeholder*="verification"]');
-    configureCodeInput('input[placeholder*="Verification"]');
-  }, 100);
+// Auto-focus next input after email
+$forgotEmailInput.on('keypress', function(e) {
+    if (e.key === 'Enter') {
+        $sendOtpBtn.click();
+    }
+});
+
+// Auto-focus next input after OTP
+$otpInput.on('keypress', function(e) {
+    if (e.key === 'Enter') {
+        $verifyOtpBtn.click();
+    }
+});
+
+// Auto-submit on Enter in password fields
+$confirmPasswordInput.on('keypress', function(e) {
+    if (e.key === 'Enter') {
+        $resetPasswordBtn.click();
+    }
 });
