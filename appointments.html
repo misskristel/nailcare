@@ -563,6 +563,7 @@
             <th>ID</th>
             <th>Client Name</th>
             <th>Nail Service</th>
+            <th>Technician</th>
             <th>Date</th>
             <th>Time</th>
             <th>Status</th>
@@ -628,6 +629,7 @@
               <td>${a.id}</td>
               <td>${a.customer ? (a.customer.firstname + ' ' + a.customer.lastname) : "-"}</td>
               <td>${a.service_name || "-"}</td>
+              <td>${a.technician_name || "-"}</td>
               <td>${formatDate(a.date)}</td>
               <td>${formatTime(a.time)}</td>
               <td>${formatStatus(a.status)}</td>
