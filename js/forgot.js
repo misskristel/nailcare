@@ -218,13 +218,6 @@ function isValidEmail(email) {
     return emailRegex.test(email);
 }
 
-// Ensure OTP input uses numeric keypad on mobile devices
-$otpInput.attr({
-    'type': 'tel',
-    'inputmode': 'numeric',
-    'pattern': '[0-9]*'
-});
-
 // Allow only numbers in OTP input
 $otpInput.on('input', function() {
     $(this).val($(this).val().replace(/[^0-9]/g, ''));
