@@ -379,7 +379,7 @@
 <body>
   <nav>
     <div class="nav-container">
-      <a href="dashboard.html" class="logo">Nail Care Booking</a>
+      <a href="dashboard.html" class="logo">Lash Appointment Booking</a>
       <ul class="nav-menu" id="nav-menu">
         <!-- Navigation will be populated by JavaScript based on role -->
       </ul>
@@ -410,15 +410,16 @@
   </main>
 
   <footer>
-    <p>&copy; 2025 Nail Care Booking. All rights reserved.</p>
+    <p>&copy; 2025 Lash Appointment Booking. All rights reserved.</p>
   </footer>
 
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="js/config.js"></script>
   <script src="js/auth.js"></script>
   <script>
     $(document).ready(function() {
-      requireAuth();
+      if (!requireAuth()) return; // Stop if not authenticated
       setupNav();
       loadAppointments();
     });
@@ -441,7 +442,7 @@
         navItems = [
           { href: 'dashboard.html', text: 'Dashboard' },
           { href: 'appointments.html', text: 'Appointments', active: true },
-          { href: 'nail-services.html', text: 'Nail Services' },
+          { href: 'lash-services.html', text: 'Lash Services' },
           { href: 'manage-users.html', text: 'Manage Users' },
           { href: 'profile.html', text: 'Profile' },
           { href: '#', text: 'Logout', id: 'logoutBtn' }
@@ -556,13 +557,13 @@
       const $theadEl = $('#appointmentsTableHead');
 
       if (role === 'admin') {
-        $titleEl.text('All Nail Care Appointments');
+        $titleEl.text('All Lash Appointment Appointments');
         $subtitleEl.text('Manage all appointments');
         $theadEl.html(`
           <tr>
             <th>ID</th>
             <th>Client Name</th>
-            <th>Nail Service</th>
+            <th>Lash Service</th>
             <th>Technician</th>
             <th>Date</th>
             <th>Time</th>
@@ -577,7 +578,7 @@
           <tr>
             <th>ID</th>
             <th>Client Name</th>
-            <th>Nail Care Service</th>
+            <th>Lash Appointment Service</th>
             <th>Date</th>
             <th>Time</th>
             <th>Status</th>
@@ -601,7 +602,7 @@
       }
 
       try {
-        const res = await axios.get("https://nailcare.ccs4thyear.com/api/appointments", {
+        const res = await axios.get(API.APPOINTMENTS, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -609,7 +610,8 @@
         $tbody.empty();
 
         if (res.data.length === 0) {
-          $tbody.html(`<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-secondary);">No appointments found</td></tr>`);
+          const colspan = role === 'admin' ? '8' : (role === 'technician' ? '7' : '7');
+          $tbody.html(`<tr><td colspan="${colspan}" style="text-align: center; padding: 2rem; color: var(--text-secondary);">No appointments found</td></tr>`);
           return;
         }
 
@@ -625,20 +627,16 @@
               `;
             }
 
-rowHtml = `
-  <td>${a.id}</td>
-  <td>${a.customer ? `${a.customer.firstname} ${a.customer.lastname}` : "-"}</td>
-  <td>${a.service_name || "-"}</td>
-  <td>
-    ${a.technician
-      ? `${a.technician.firstname} ${a.technician.lastname}`
-      : "-"}
-  </td>
-  <td>${formatDate(a.date)}</td>
-  <td>${formatTime(a.time)}</td>
-  <td>${formatStatus(a.status)}</td>
-  <td>${actionsHtml}</td>
-`;
+            rowHtml = `
+              <td>${a.id}</td>
+              <td>${a.customer ? (a.customer.firstname + ' ' + a.customer.lastname) : "-"}</td>
+              <td>${a.service_name || "-"}</td>
+              <td>${a.technician ? a.technician.name : "-"}</td>
+              <td>${formatDate(a.date)}</td>
+              <td>${formatTime(a.time)}</td>
+              <td>${formatStatus(a.status)}</td>
+              <td>${actionsHtml}</td>
+            `;
           } else if (role === "technician") {
             // Add "Mark as Completed" button for approved appointments
             let actionsHtml = "";
@@ -658,23 +656,19 @@ rowHtml = `
           } else {
             // Client view
             const serviceImage = a.service_image || 'uploads/default.png';
-            // Allow rescheduling only for pending and declined appointments, NOT for approved
-            const rescheduleBtn = (a.status === 'pending' || a.status === 'declined')
-              ? `<button type="button" class="action-btn primary" onclick="rescheduleAppointment(${a.id})">Reschedule</button>`
-              : '';
             // Allow cancelling only when status is pending
             const cancelBtn = (a.status === 'pending')
               ? `<button type="button" class="action-btn danger" onclick="cancelAppointment(${a.id})">Cancel</button>`
               : '';
             
             rowHtml = `
-              <td><img src="https://nailcare.ccs4thyear.com/${serviceImage}" alt="${a.service_name}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;"></td>
+              <td><img src="${getImageUrl(serviceImage)}" alt="${a.service_name}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;"></td>
               <td>${a.service_name || "-"}</td>
               <td>${a.technician ? a.technician.name : "-"}</td>
               <td>${formatDate(a.date)}</td>
               <td>${formatTime(a.time)}</td>
               <td>${formatStatus(a.status)}</td>
-              <td>${rescheduleBtn} ${cancelBtn}</td>
+              <td>${cancelBtn}</td>
             `;
           }
 
@@ -683,7 +677,22 @@ rowHtml = `
         });
       } catch (err) {
         console.error("Load appointments error:", err);
-        alert("Failed to load appointments.");
+        // Show more detailed error message
+        let errorMsg = "Failed to load appointments.";
+        if (err.response) {
+          // Server responded with an error
+          if (err.response.status === 401) {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('userRole');
+            window.location.replace('login.html');
+            return;
+          }
+          errorMsg += " Server error: " + (err.response.data?.message || err.response.status);
+        } else if (err.request) {
+          // No response received - server might be down
+          errorMsg = "Cannot connect to server. Please make sure the backend server is running.";
+        }
+        alert(errorMsg);
       }
     }
 
@@ -702,18 +711,13 @@ rowHtml = `
       await updateAppointmentStatus(id, 'completed');
     }
 
-    async function rescheduleAppointment(id) {
-      // Redirect to booking page with appointment ID for rescheduling
-      window.location.href = `book_appointment.html?reschedule=${id}`;
-    }
-
     async function updateAppointmentStatus(id, status = null) {
       const token = localStorage.getItem("authToken");
       const newStatus = status || 'approved';
 
       try {
-        await axios.put(
-          `https://nailcare.ccs4thyear.com/api/appointments/${id}`,
+        await axios.patch(
+          API.APPOINTMENT(id),
           { status: newStatus },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -721,7 +725,22 @@ rowHtml = `
         loadAppointments();
       } catch (err) {
         console.error("Update status error:", err);
-        alert("Failed to update status.");
+        let errorMsg = "Failed to update status.";
+        if (err.response) {
+          if (err.response.status === 401) {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('userRole');
+            window.location.replace('login.html');
+            return;
+          } else if (err.response.status === 403) {
+            errorMsg = "You don't have permission to update this appointment.";
+          } else {
+            errorMsg += " " + (err.response.data?.message || "Server error: " + err.response.status);
+          }
+        } else if (err.request) {
+          errorMsg = "Cannot connect to server. Please check if the backend is running.";
+        }
+        alert(errorMsg);
       }
     }
 
