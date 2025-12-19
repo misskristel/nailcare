@@ -428,6 +428,10 @@
         padding: 1rem;
       }
 
+      .logo {
+        font-size: 1.25rem;
+      }
+
       .hamburger {
         display: flex;
       }
@@ -447,6 +451,7 @@
         transition: all 0.3s ease;
         border-bottom: 1px solid var(--border-color);
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        backdrop-filter: blur(10px);
       }
 
       .nav-menu.active {
@@ -455,12 +460,125 @@
         visibility: visible;
       }
 
+      .nav-menu li a {
+        display: block;
+        text-align: center;
+        padding: 0.75rem;
+        font-size: 1rem;
+      }
+
+      main {
+        padding: 100px 1rem 60px;
+      }
+
+      .dashboard-title {
+        font-size: 2rem;
+      }
+
+      .dashboard-subtitle {
+        font-size: 1rem;
+      }
+
+      .search-add-container {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      #searchInput {
+        max-width: none;
+      }
+
+      .add-btn {
+        width: 100%;
+        justify-content: center;
+      }
+
       .table-container {
         overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 1rem;
       }
 
       table {
         min-width: 700px;
+      }
+
+      th, td {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.85rem;
+      }
+
+      .action-btn {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+        margin-right: 0.25rem;
+        margin-bottom: 0.25rem;
+        min-height: 36px;
+        touch-action: manipulation;
+      }
+
+      /* Modal improvements */
+      .modal-content {
+        margin: 10% auto;
+        padding: 1.5rem;
+        width: 95%;
+        max-width: none;
+      }
+
+      .modal-header h2 {
+        font-size: 1.25rem;
+      }
+
+      .form-group input,
+      .form-group select {
+        padding: 0.75rem;
+        font-size: 0.95rem;
+      }
+
+      .modal-actions {
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .btn {
+        width: 100%;
+        padding: 0.875rem;
+        min-height: 44px;
+        touch-action: manipulation;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .dashboard-title {
+        font-size: 1.75rem;
+      }
+
+      .table-container {
+        padding: 0.75rem;
+      }
+
+      th, td {
+        padding: 0.6rem 0.4rem;
+        font-size: 0.8rem;
+      }
+
+      .action-btn {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.75rem;
+        min-height: 32px;
+      }
+
+      .modal-content {
+        padding: 1.25rem;
+        margin: 5% auto;
+      }
+
+      .modal-header h2 {
+        font-size: 1.1rem;
+      }
+
+      .close {
+        font-size: 1.5rem;
       }
     }
   </style>

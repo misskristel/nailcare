@@ -303,9 +303,18 @@
       font-size: 0.9rem;
     }
 
+    /* Mobile card layout for appointments */
+    .appointment-card {
+      display: none;
+    }
+
     @media (max-width: 768px) {
       nav {
         padding: 1rem;
+      }
+
+      .logo {
+        font-size: 1.25rem;
       }
 
       .hamburger {
@@ -339,23 +348,97 @@
       .nav-menu li a {
         display: block;
         text-align: center;
-        padding: 0.5rem;
+        padding: 0.75rem;
+        font-size: 1rem;
       }
 
       main {
-        padding: 100px 1rem 80px;
+        padding: 100px 1rem 60px;
       }
 
       .dashboard-title {
         font-size: 2rem;
       }
 
-      .table-container {
-        overflow-x: auto;
+      .dashboard-subtitle {
+        font-size: 1rem;
       }
 
-      table {
-        min-width: 650px;
+      /* Hide table on mobile, show cards */
+      .table-container table {
+        display: none;
+      }
+
+      .table-container {
+        padding: 0;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+      }
+
+      /* Show card layout */
+      .appointment-card {
+        display: block;
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+        box-shadow: var(--shadow);
+      }
+
+      .appointment-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .appointment-card-title {
+        font-weight: 600;
+        font-size: 1rem;
+        color: var(--text-primary);
+      }
+
+      .appointment-card-body {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .appointment-card-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.9rem;
+      }
+
+      .appointment-card-label {
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      .appointment-card-value {
+        color: var(--text-primary);
+        text-align: right;
+        flex: 1;
+        margin-left: 1rem;
+      }
+
+      .appointment-card-actions {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .appointment-card-actions .action-btn {
+        flex: 1;
+        min-width: 100px;
+        min-height: 36px;
+        touch-action: manipulation;
       }
     }
 
@@ -364,14 +447,37 @@
         font-size: 1.75rem;
       }
 
-      .table-container {
+      .dashboard-subtitle {
+        font-size: 0.95rem;
+      }
+
+      .appointment-card {
         padding: 1rem;
       }
 
-      th,
-      td {
-        padding: 0.6rem 0.4rem;
-        font-size: 0.8rem;
+      .appointment-card-title {
+        font-size: 0.95rem;
+      }
+
+      .appointment-card-row {
+        font-size: 0.85rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+      }
+
+      .appointment-card-value {
+        text-align: left;
+        margin-left: 0;
+      }
+
+      .appointment-card-actions {
+        flex-direction: column;
+      }
+
+      .appointment-card-actions .action-btn {
+        width: 100%;
+        min-width: auto;
       }
     }
   </style>
@@ -606,7 +712,11 @@
         });
 
         const $tbody = $("#appointmentsTable tbody");
+        const $tableContainer = $(".table-container");
         $tbody.empty();
+        
+        // Clear existing cards
+        $tableContainer.find('.appointment-card').remove();
 
         if (res.data.length === 0) {
           $tbody.html(`<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-secondary);">No appointments found</td></tr>`);
@@ -615,6 +725,7 @@
 
         res.data.forEach((a) => {
           let rowHtml = "";
+          let cardHtml = "";
 
           if (role === "admin") {
             let actionsHtml = "";
@@ -635,6 +746,38 @@ rowHtml = `
   <td>${formatStatus(a.status)}</td>
   <td>${actionsHtml}</td>
 `;
+
+            cardHtml = `
+              <div class="appointment-card">
+                <div class="appointment-card-header">
+                  <div class="appointment-card-title">Appointment #${a.id}</div>
+                  <div>${formatStatus(a.status)}</div>
+                </div>
+                <div class="appointment-card-body">
+                  <div class="appointment-card-row">
+                    <span class="appointment-card-label">Client:</span>
+                    <span class="appointment-card-value">${a.customer ? `${a.customer.firstname} ${a.customer.lastname}` : "-"}</span>
+                  </div>
+                  <div class="appointment-card-row">
+                    <span class="appointment-card-label">Service:</span>
+                    <span class="appointment-card-value">${a.service_name || "-"}</span>
+                  </div>
+                  <div class="appointment-card-row">
+                    <span class="appointment-card-label">Technician:</span>
+                    <span class="appointment-card-value">${a.technician ? a.technician.name : "-"}</span>
+                  </div>
+                  <div class="appointment-card-row">
+                    <span class="appointment-card-label">Date:</span>
+                    <span class="appointment-card-value">${formatDate(a.date)}</span>
+                  </div>
+                  <div class="appointment-card-row">
+                    <span class="appointment-card-label">Time:</span>
+                    <span class="appointment-card-value">${formatTime(a.time)}</span>
+                  </div>
+                  ${actionsHtml ? `<div class="appointment-card-actions">${actionsHtml}</div>` : ''}
+                </div>
+              </div>
+            `;
           } else if (role === "technician") {
             // Add "Mark as Completed" button for approved appointments
             let actionsHtml = "";
@@ -650,6 +793,34 @@ rowHtml = `
               <td>${formatTime(a.time)}</td>
               <td>${formatStatus(a.status)}</td>
               <td>${actionsHtml}</td>
+            `;
+
+            cardHtml = `
+              <div class="appointment-card">
+                <div class="appointment-card-header">
+                  <div class="appointment-card-title">Appointment #${a.id}</div>
+                  <div>${formatStatus(a.status)}</div>
+                </div>
+                <div class="appointment-card-body">
+                  <div class="appointment-card-row">
+                    <span class="appointment-card-label">Client:</span>
+                    <span class="appointment-card-value">${a.customer ? (a.customer.firstname + ' ' + a.customer.lastname) : "-"}</span>
+                  </div>
+                  <div class="appointment-card-row">
+                    <span class="appointment-card-label">Service:</span>
+                    <span class="appointment-card-value">${a.service_name || "-"}</span>
+                  </div>
+                  <div class="appointment-card-row">
+                    <span class="appointment-card-label">Date:</span>
+                    <span class="appointment-card-value">${formatDate(a.date)}</span>
+                  </div>
+                  <div class="appointment-card-row">
+                    <span class="appointment-card-label">Time:</span>
+                    <span class="appointment-card-value">${formatTime(a.time)}</span>
+                  </div>
+                  ${actionsHtml ? `<div class="appointment-card-actions">${actionsHtml}</div>` : ''}
+                </div>
+              </div>
             `;
           } else {
             // Client view
@@ -672,10 +843,42 @@ rowHtml = `
               <td>${formatStatus(a.status)}</td>
               <td>${rescheduleBtn} ${cancelBtn}</td>
             `;
+
+            cardHtml = `
+              <div class="appointment-card">
+                <div class="appointment-card-header">
+                  <div class="appointment-card-title">${a.service_name || "Appointment"}</div>
+                  <div>${formatStatus(a.status)}</div>
+                </div>
+                <div class="appointment-card-body">
+                  <div style="text-align: center; margin-bottom: 1rem;">
+                    <img src="https://nailcare.ccs4thyear.com/${serviceImage}" alt="${a.service_name}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px;">
+                  </div>
+                  <div class="appointment-card-row">
+                    <span class="appointment-card-label">Technician:</span>
+                    <span class="appointment-card-value">${a.technician ? a.technician.name : "-"}</span>
+                  </div>
+                  <div class="appointment-card-row">
+                    <span class="appointment-card-label">Date:</span>
+                    <span class="appointment-card-value">${formatDate(a.date)}</span>
+                  </div>
+                  <div class="appointment-card-row">
+                    <span class="appointment-card-label">Time:</span>
+                    <span class="appointment-card-value">${formatTime(a.time)}</span>
+                  </div>
+                  ${(rescheduleBtn || cancelBtn) ? `<div class="appointment-card-actions">${rescheduleBtn} ${cancelBtn}</div>` : ''}
+                </div>
+              </div>
+            `;
           }
 
           const $tr = $('<tr>').html(rowHtml);
           $tbody.append($tr);
+          
+          // Add card for mobile view
+          if (cardHtml) {
+            $tableContainer.append($(cardHtml));
+          }
         });
       } catch (err) {
         console.error("Load appointments error:", err);

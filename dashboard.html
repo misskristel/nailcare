@@ -342,6 +342,10 @@
         padding: 1rem;
       }
 
+      .logo {
+        font-size: 1.25rem;
+      }
+
       .hamburger {
         display: flex;
       }
@@ -373,28 +377,42 @@
       .nav-menu li a {
         display: block;
         text-align: center;
-        padding: 0.5rem;
+        padding: 0.75rem;
+        font-size: 1rem;
       }
 
       main {
-        padding: 100px 1rem 80px;
+        padding: 100px 1rem 60px;
       }
 
       .dashboard-title {
         font-size: 2rem;
       }
 
+      .dashboard-subtitle {
+        font-size: 1rem;
+      }
+
       .search-add-container {
         flex-direction: column;
         align-items: stretch;
+        gap: 1rem;
       }
 
       #searchInput {
         max-width: none;
+        padding: 0.875rem 1rem;
+      }
+
+      .add-btn {
+        width: 100%;
+        justify-content: center;
       }
 
       .table-container {
         overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 1rem;
       }
 
       table {
@@ -405,6 +423,17 @@
         padding: 0.75rem 0.5rem;
         font-size: 0.85rem;
       }
+
+      /* Improve dashboard statistics grid on mobile */
+      .dashboard-container > div[style*="grid-template-columns"] {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+      }
+
+      /* Improve two-column layout on mobile */
+      .dashboard-container > div[style*="minmax(0, 2fr)"] {
+        grid-template-columns: 1fr !important;
+      }
     }
 
     @media (max-width: 480px) {
@@ -412,8 +441,12 @@
         font-size: 1.75rem;
       }
 
+      .dashboard-subtitle {
+        font-size: 0.95rem;
+      }
+
       .table-container {
-        padding: 1rem;
+        padding: 0.75rem;
       }
 
       th, td {
@@ -422,14 +455,33 @@
       }
 
       .action-btn {
-        padding: 0.4rem 0.8rem;
-        font-size: 0.8rem;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.75rem;
         margin-right: 0.25rem;
+        margin-bottom: 0.25rem;
+        min-height: 36px;
+        touch-action: manipulation;
       }
 
       .nail-image {
         width: 40px;
         height: 40px;
+      }
+
+      /* Stack action buttons on very small screens */
+      td:last-child {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+      }
+
+      /* Improve quick actions buttons */
+      .table-container a[style*="padding:0.85rem"] {
+        padding: 0.75rem 1.25rem !important;
+        font-size: 0.85rem !important;
+        display: block;
+        text-align: center;
+        margin-bottom: 0.5rem;
       }
     }
 
