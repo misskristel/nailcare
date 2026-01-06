@@ -609,7 +609,8 @@
         $tbody.empty();
 
         if (res.data.length === 0) {
-          $tbody.html(`<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-secondary);">No appointments found</td></tr>`);
+          const colspan = role === 'admin' ? '8' : (role === 'technician' ? '7' : '7');
+          $tbody.html(`<tr><td colspan="${colspan}" style="text-align: center; padding: 2rem; color: var(--text-secondary);">No appointments found</td></tr>`);
           return;
         }
 
@@ -625,16 +626,16 @@
               `;
             }
 
-rowHtml = `
-  <td>${a.id}</td>
-  <td>${a.customer ? `${a.customer.firstname} ${a.customer.lastname}` : "-"}</td>
-  <td>${a.service_name || "-"}</td>
-  <td>${a.technician ? a.technician.name : "-"}</td>
-  <td>${formatDate(a.date)}</td>
-  <td>${formatTime(a.time)}</td>
-  <td>${formatStatus(a.status)}</td>
-  <td>${actionsHtml}</td>
-`;
+            rowHtml = `
+              <td>${a.id}</td>
+              <td>${a.customer ? (a.customer.firstname + ' ' + a.customer.lastname) : "-"}</td>
+              <td>${a.service_name || "-"}</td>
+              <td>${a.technician ? a.technician.name : "-"}</td>
+              <td>${formatDate(a.date)}</td>
+              <td>${formatTime(a.time)}</td>
+              <td>${formatStatus(a.status)}</td>
+              <td>${actionsHtml}</td>
+            `;
           } else if (role === "technician") {
             // Add "Mark as Completed" button for approved appointments
             let actionsHtml = "";
@@ -708,7 +709,7 @@ rowHtml = `
       const newStatus = status || 'approved';
 
       try {
-        await axios.put(
+        const response = await axios.put(
           `https://nailcare.ccs4thyear.com/api/appointments/${id}`,
           { status: newStatus },
           { headers: { Authorization: `Bearer ${token}` } }
@@ -717,12 +718,30 @@ rowHtml = `
         loadAppointments();
       } catch (err) {
         console.error("Update status error:", err);
-        alert("Failed to update status.");
+        let errorMsg = "Failed to update appointment status.";
+        if (err.response) {
+          if (err.response.status === 401) {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('userRole');
+            alert('Session expired. Please login again.');
+            window.location.href = 'login.html';
+            return;
+          } else if (err.response.status === 403) {
+            errorMsg = "You don't have permission to update this appointment.";
+          } else if (err.response.data && err.response.data.message) {
+            errorMsg = err.response.data.message;
+          } else {
+            errorMsg += " Server error: " + err.response.status;
+          }
+        } else if (err.request) {
+          errorMsg = "Cannot connect to server. Please check your connection.";
+        }
+        alert(errorMsg);
       }
     }
 
     async function cancelAppointment(id) {
-      if (!confirm("Cancel this appointment?")) return;
+      if (!confirm("Are you sure you want to cancel this appointment?")) return;
       await updateAppointmentStatus(id, 'canceled');
     }
   </script>
