@@ -459,14 +459,25 @@
         }
 
         try {
+          // Check if this is a reschedule request
+          const urlParams = new URLSearchParams(window.location.search);
+          const rescheduleId = urlParams.get('reschedule');
+          
+          const requestData = {
+            technician_id: technicianId,
+            service_name: serviceName,
+            date: date,
+            time: timeSlot,
+          };
+          
+          // Include reschedule_id if this is a reschedule
+          if (rescheduleId) {
+            requestData.reschedule_id = rescheduleId;
+          }
+          
           const res = await axios.post(
             "https://nailcare.ccs4thyear.com/api/appointments",
-            {
-              technician_id: technicianId,
-              service_name: serviceName,
-              date: date,
-              time: timeSlot,
-            },
+            requestData,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -475,7 +486,7 @@
           );
 
           if (res.status === 201) {
-            alert("Appointment booked!");
+            alert(rescheduleId ? "Appointment rescheduled successfully!" : "Appointment booked!");
             window.location.href = "appointments.html";
           }
         } catch (err) {
